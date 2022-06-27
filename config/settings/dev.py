@@ -1,5 +1,6 @@
-from .base import *
+from .base import *  # noqa: F403
 
-class DevelopmentConfig():
+
+class DevelopmentConfig:
     DEBUG = True
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
