@@ -21,7 +21,7 @@ extrapatterns = [
         name="schema-swagger-ui",
     ),
     path("houses/", include("apps.houses.urls")),
-    path("sellers/", include("apps.sellers.urls")),
+    path("users/", include("apps.users.urls")),
 ]
 urlpatterns = [
     path("admin/", admin.site.urls),

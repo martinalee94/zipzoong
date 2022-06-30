@@ -8,8 +8,8 @@ class House(TimeStampModel, models.Model):
     id = models.CharField(verbose_name="집 일련번호", primary_key=True, max_length=32)
     type = models.CharField(verbose_name="주거 형태", max_length=4, db_index=True)
     contract_type = models.CharField(verbose_name="판매 유형", max_length=4, db_index=True)
-    sell_price = models.CharField(verbose_name="매매가", max_length=256, null=True)
-    charter_rent_price = models.CharField(verbose_name="전세가", max_length=256, null=True)
+    sell_price = models.IntegerField(verbose_name="매매가", null=True)
+    charter_rent_price = models.IntegerField(verbose_name="전세가", null=True)
     monthly_rent_price = models.IntegerField(verbose_name="월세가", null=True)
     deposit_rent_price = models.IntegerField(verbose_name="보증금", null=True)
     sido_addr = models.CharField(verbose_name="시도", max_length=32)
@@ -17,16 +17,23 @@ class House(TimeStampModel, models.Model):
     street_addr = models.CharField(verbose_name="도로명", max_length=128)
     detail_addr = models.CharField(verbose_name="상세주소", max_length=256)
     postal_code = models.CharField(verbose_name="우편번호", max_length=6)
-    seller = models.ForeignKey(Seller, related_name="seller", db_index=True)
+    seller = models.ForeignKey(
+        Seller,
+        related_name="house",
+        on_delete=models.SET_DEFAULT,
+        db_index=True,
+        default="deleted",
+    )
 
 
 class HouseOption(TimeStampModel, models.Model):
     id = models.CharField(verbose_name="집 일련번호", primary_key=True, max_length=32)
     # TODO: 옵션 종류 협의 필요
+    air_conditioner = models.SmallIntegerField(verbose_name="냉장고")
 
 
 class HouseImage(TimeStampModel, models.Model):
-    house = models.ForeignKey(House, related_name="")
+    house = models.ForeignKey(House, related_name="image", on_delete=models.CASCADE)
     path = models.CharField(verbose_name="사진 경로", max_length=256)
     name = models.CharField(verbose_name="사진명", max_length=256)
     extension = models.CharField(verbose_name="사진 확장자", max_length=256)
