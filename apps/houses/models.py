@@ -50,3 +50,25 @@ class HouseImage(TimeStampModel, models.Model):
 
     class Meta:
         db_table = "house_image"
+
+
+class HouseBidInfo(TimeStampModel, models.Model):
+    house = models.ForeignKey(House, related_name="bid_info", on_delete=models.CASCADE)
+    agent = models.ForeignKey(Agent, related_name="bid_info", on_delete=models.CASCADE)
+    bid_price = models.IntegerField(verbose_name="중개 수수료 입찰가")
+    contact_req = models.CharField(
+        verbose_name="연락요청 여부",
+        max_length=2,
+        choices=[("Y", "Yes"), ("N", "No")],
+        default="N",
+    )
+    kind_rating = models.SmallIntegerField(verbose_name="친절도")
+    speed_rating = models.SmallIntegerField(verbose_name="빠른 처리")
+    cost_rating = models.SmallIntegerField(verbose_name="가격 경쟁력")
+    time_rating = models.SmallIntegerField(verbose_name="시간 준수")
+    quality_rating = models.SmallIntegerField(verbose_name="매물 퀄리티")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["house", "agent"], name="unique_bid")
+        ]
