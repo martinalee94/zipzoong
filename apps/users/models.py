@@ -11,6 +11,12 @@ class Seller(TimeStampModel, models.Model):
     nickname = models.CharField(verbose_name="판매자 닉네임", max_length=20, null=True)
     phone = models.CharField(verbose_name="판매자 전화번호", max_length=11, null=True)
 
+    class Meta:
+        db_table = "seller"
+
 
 class Agent(TimeStampModel, models.Model):
     id = models.CharField(verbose_name="중계사 일련번호", primary_key=True, max_length=32)
+
+    class Meta:
+        db_table = "agent"

@@ -1,7 +1,7 @@
 from django.db import models
 
 from apps.commons.models import TimeStampModel
-from apps.users.models import Seller
+from apps.users.models import Agent, Seller
 
 
 class House(TimeStampModel, models.Model):
@@ -25,11 +25,17 @@ class House(TimeStampModel, models.Model):
         default="deleted",
     )
 
+    class Meta:
+        db_table = "house"
+
 
 class HouseOption(TimeStampModel, models.Model):
     id = models.CharField(verbose_name="집 일련번호", primary_key=True, max_length=32)
     # TODO: 옵션 종류 협의 필요
     air_conditioner = models.SmallIntegerField(verbose_name="냉장고")
+
+    class Meta:
+        db_table = "house_option"
 
 
 class HouseImage(TimeStampModel, models.Model):
@@ -41,3 +47,6 @@ class HouseImage(TimeStampModel, models.Model):
     width = models.IntegerField(verbose_name="사진 가로 길이")
     height = models.IntegerField(verbose_name="사진 세로 길이")
     wh_type = models.SmallIntegerField(verbose_name="사진 크기 타입")
+
+    class Meta:
+        db_table = "house_image"
