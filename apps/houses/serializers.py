@@ -27,3 +27,15 @@ class AddressSaveSerializer(serializers.ModelSerializer):
         seller = Seller.objects.get(id=seller_id)
         house = House.objects.create(seller=seller, **validated_data)
         return house
+
+
+class ContractTypeSaveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = House
+        fields = ["id", "contract_type"]
+
+
+class HousePriceSaveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = House
+        fields = ["id", "sell_price", "charter_rent_price", "monthly_rent_price", "deposit_rent_price"]
