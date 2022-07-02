@@ -11,3 +11,12 @@ class SellerGetSaveSerializer(serializers.ModelSerializer):
         model = Seller
         fields = ["id", "uniq_num"]
         read_only_fields = ["uniq_num"]
+
+
+class SellerHouseInfoSerializer(serializers.ModelSerializer):
+    house = HouseListSerializer(many=True)
+
+    class Meta:
+        model = Seller
+        fields = ["id", "uniq_num", "house"]
+        read_only_fields = ["house"]
