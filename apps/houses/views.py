@@ -1,5 +1,7 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from rest_framework import generics
 
-def HelloView(request):
-    return HttpResponse("hi")
+from .serializers import AddressSaveSerializer
+
+
+class AddressSaveView(generics.CreateAPIView):
+    serializer_class = AddressSaveSerializer
