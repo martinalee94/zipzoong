@@ -2,7 +2,13 @@ from django.db.models import Q
 from rest_framework import generics
 
 from .models import House, HouseOption
-from .serializers import AddressSaveSerializer, ContractTypeSaveSerializer, HousePriceSaveSerializer, GetOneHouseInfoSerializer
+from .serializers import (
+    AddressSaveSerializer,
+    ContractTypeSaveSerializer,
+    GetOneHouseInfoSerializer,
+    HouseOptionListSerializer,
+    HousePriceSaveSerializer,
+)
 
 
 class GetOneHouseInfoView(generics.RetrieveAPIView):
@@ -34,4 +40,13 @@ class HousePriceSaveView(generics.UpdateAPIView):
 
     def get_queryset(self):
         queryset = House.objects.filter(id=self.kwargs["id"])
+        return queryset
+
+
+class HouseOptionSaveView(generics.UpdateAPIView):
+    serializer_class = HouseOptionListSerializer
+    lookup_field = "id"
+
+    def get_queryset(self):
+        queryset = House.objects.filter(id=self.kwargs["id"]).prefetch_related("options")
         return queryset

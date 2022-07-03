@@ -20,6 +20,7 @@ class HouseOptionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseOption
         fields = "__all__"
+        read_only_fields = ["house"]
 
 
 class HouseImageListSerializer(serializers.ModelSerializer):
