@@ -32,7 +32,7 @@ class House(TimeStampModel, models.Model):
 
 
 class HouseOption(TimeStampModel, models.Model):
-    house = models.ForeignKey(
+    house = models.OneToOneField(
         House,
         related_name="options",
         on_delete=models.CASCADE,
@@ -45,7 +45,7 @@ class HouseOption(TimeStampModel, models.Model):
 
 
 class HouseImage(TimeStampModel, models.Model):
-    house = models.ForeignKey(House, related_name="images", on_delete=models.CASCADE)
+    house = models.OneToOneField(House, related_name="images", on_delete=models.CASCADE)
     path = models.CharField(verbose_name="사진 경로", max_length=256)
     name = models.CharField(verbose_name="사진명", max_length=256)
     type = models.CharField(verbose_name="사진 확장자", max_length=256)

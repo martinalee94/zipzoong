@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from apps.users.models import Seller
@@ -13,6 +14,31 @@ class HouseListSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class HouseOptionListSerializer(serializers.ModelSerializer):
+    """집 옵션 기본 시리얼라이저"""
+
+    class Meta:
+        model = HouseOption
+        fields = "__all__"
+
+
+class HouseImageListSerializer(serializers.ModelSerializer):
+    """집 사진 기본 시리얼라이저"""
+
+    class Meta:
+        model = HouseImage
+        fields = "__all__"
+
+
+class GetOneHouseInfoSerializer(serializers.ModelSerializer):
+    options = HouseOptionListSerializer()
+    images = HouseImageListSerializer(many=True)
+
+    class Meta:
+        model = House
+        fields = "__all__"
+
+
 class AddressSaveSerializer(serializers.ModelSerializer):
     full_addr = serializers.CharField(max_length=256)
 
@@ -21,6 +47,7 @@ class AddressSaveSerializer(serializers.ModelSerializer):
         fields = ["id", "full_addr"]
         read_only_fields = ["id"]
 
+    @transaction.atomic
     def create(self, validated_data):
         request = self.context.get("request")
         seller_id = request.headers.get("seller-id")
