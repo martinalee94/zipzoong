@@ -1,13 +1,9 @@
 from django import views
 from django.urls import include, path
 
-from .views import SellerExistSaveView, SellerHouseInfoView
+from .views import SellerHouseInfoView, SellerRegisterView
 
 urlpatterns = [
-    path(
-        "sellers/",
-        SellerExistSaveView.as_view(),
-        name="seller_exists_or_save",
-    ),
+    path("sellers/register", SellerRegisterView.as_view(), name="seller_register"),
     path("sellers/house-info", SellerHouseInfoView.as_view(), name="seller_house_info"),
 ]

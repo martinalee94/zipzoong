@@ -1,23 +1,24 @@
-from rest_framework import generics
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 
 from apps.users.models import Seller
 
-from .serializers import SellerGetSaveSerializer, SellerHouseInfoSerializer
+from .serializers import SellerHouseInfoSerializer, SellerRegisterSerializer
 
 
-class SellerExistSaveView(generics.CreateAPIView):
-    serializer_class = SellerGetSaveSerializer
-    permission_classes = [AllowAny]
+class SellerRegisterView(generics.CreateAPIView):
+    serializer_class = SellerRegisterSerializer
 
+    @swagger_auto_schema(
+        operation_summary="판매자 가입 API",
+        responses={
+            201: "가입 성공",
+            400: "상세 에러 메세지 확인",
+        },
+    )
     def post(self, request, *args, **kwargs):
-        try:
-            return super().create(request, *args, **kwargs)
-        except Exception:
-            seller = Seller.objects.get(id=request.data["id"])
-            serializer = self.get_serializer(seller)
-            return Response(serializer.data)
+        return self.create(request, *args, **kwargs)
 
 
 class SellerHouseInfoView(generics.ListAPIView):
@@ -26,5 +27,7 @@ class SellerHouseInfoView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def filter_queryset(self, queryset):
-        queryset = Seller.objects.prefetch_related("house").filter(id=self.request.headers.get("seller-id"))
+        queryset = Seller.objects.prefetch_related("house").filter(
+            id=self.request.headers.get("seller-id")
+        )
         return queryset
