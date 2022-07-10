@@ -1,10 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework import generics
 
-from apps.users.models import Seller
-
-from .serializers import SellerHouseInfoSerializer, SellerRegisterSerializer
+from .serializers import SellerRegisterSerializer
 
 
 class SellerRegisterView(generics.CreateAPIView):
@@ -19,15 +16,3 @@ class SellerRegisterView(generics.CreateAPIView):
     )
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
-
-
-class SellerHouseInfoView(generics.ListAPIView):
-    queryset = Seller.objects.all()
-    serializer_class = SellerHouseInfoSerializer
-    permission_classes = [AllowAny]
-
-    def filter_queryset(self, queryset):
-        queryset = Seller.objects.prefetch_related("house").filter(
-            id=self.request.headers.get("seller-id")
-        )
-        return queryset
