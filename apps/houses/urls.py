@@ -1,7 +1,7 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 
-from .views import HelloView
+from .views import UploadAddressView
+
 urlpatterns = [
-    path('hi/', HelloView, name="hi_view"),
+    path("address", UploadAddressView.as_view(), name="save_house_address"),
 ]
