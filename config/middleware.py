@@ -14,10 +14,13 @@ class CustomSellerCheckMiddleware(MiddlewareMixin):
             re.compile(r"^(.*)/api"),
             re.compile(r"^api"),
         ]
+        self.white_list = ["/api/docs", "/admin", "/api/users/sellers/register"]
 
     def process_request(self, request):
-        if request.path.startswith("/api/users/sellers/register"):
-            return None
+        for white in self.white_list:
+            if request.path.startswith(white):
+                return None
+
         if not request.headers.get("Authorization"):
             return JsonResponse(
                 data={
