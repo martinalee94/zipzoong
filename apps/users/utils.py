@@ -1,11 +1,20 @@
 import os
 
 import jwt
+from django.utils import timezone
 
 
 def create_user_token(user_id, device):
     key = os.getenv("SECRET_KEY")
-    encoded = jwt.encode({"user_id": user_id, "device": device}, key, algorithm="HS256")
+    encoded = jwt.encode(
+        {
+            "user_id": user_id,
+            "device": device,
+            "exp": timezone.localtime() + timezone.timedelta(hours=6),
+        },
+        key,
+        algorithm="HS256",
+    )
     return encoded
 
 
