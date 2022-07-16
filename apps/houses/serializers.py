@@ -9,6 +9,33 @@ from apps.users.utils import get_seller_from_header
 from .models import House, HouseImage, HouseOption
 
 
+class HouseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = House
+        fields = "__all__"
+
+
+class HouseOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HouseOption
+        exclude = ["id", "created_at", "modified_at", "house"]
+
+
+class HouseImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HouseImage
+        exclude = ["created_at", "modified_at", "house"]
+
+
+class GetHouseInfoSerializer(serializers.ModelSerializer):
+    options = HouseOptionSerializer(read_only=True)
+    images = HouseImageSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = House
+        fields = "__all__"
+
+
 class UploadAddressSerializer(serializers.ModelSerializer):
     full_addr = serializers.CharField(max_length=256)
 
