@@ -6,7 +6,7 @@ from rest_framework import serializers, status
 from apps.users.models import Seller
 from apps.users.utils import get_seller_from_header
 
-from .models import House
+from .models import House, HouseImage, HouseOption
 
 
 class UploadAddressSerializer(serializers.ModelSerializer):
@@ -56,4 +56,28 @@ class UploadSellPriceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = House
-        fields = ["sellPrice"]
+        fields = ["sell_price"]
+
+
+class UploadHouseOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HouseOption
+        exclude = ["created_at", "modified_at", "house"]
+
+
+class UploadHouseImageSerializer(serializers.ModelSerializer):
+    file = serializers.ImageField(write_only=True, source="path")
+
+    class Meta:
+        model = HouseImage
+        fields = ["file"]
+
+    @transaction.atomic
+    def create(self, validated_data, *args, **kwargs):
+        request = self.context.get("request")
+        size = request.FILES["file"].size
+        type = request.FILES["file"].name.split(".")[-1]
+        house_id = request.path.split("/")[-1]
+        house = House.objects.get(id=house_id)
+        image = HouseImage.objects.create(house=house, type=type, size=size, **validated_data)
+        return image

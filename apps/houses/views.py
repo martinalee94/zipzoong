@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from drf_yasg.utils import swagger_auto_schema
@@ -12,6 +13,8 @@ from .serializers import (
     UploadAddressSerializer,
     UploadCharterPriceSerializer,
     UploadContractTypeSerializer,
+    UploadHouseImageSerializer,
+    UploadHouseOptionSerializer,
     UploadMonthlyPriceSerializer,
     UploadSellPriceSerializer,
 )
@@ -111,3 +114,37 @@ class UploadSellPriceView(generics.UpdateAPIView):
             return Response(data="올바른 매물 ID를 입력해 주세요", status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(data="소유한 매물이 아닙니다", status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadHouseOptionView(generics.UpdateAPIView):
+    serializer_class = UploadHouseOptionSerializer
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        operation_summary="매물 옵션 입력 API",
+        responses={200: "등록 성공", 400: "오류 메세지 확인"},
+    )
+    def patch(self, request, *args, **kwargs):
+        seller_info = get_seller_from_header(request)
+        try:
+            if check_seller_own_house(seller_info, self.kwargs["id"]):
+                return self.partial_update(request, *args, **kwargs)
+        except ObjectDoesNotExist:
+            return Response(data="올바른 매물 ID를 입력해 주세요", status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data="소유한 매물이 아닙니다", status=status.HTTP_400_BAD_REQUEST)
+
+    def get_queryset(self):
+        queryset = House.objects.filter(id=self.kwargs["id"]).prefetch_related("options")
+        return queryset
+
+
+class UploadHouseImageView(generics.CreateAPIView):
+    serializer_class = UploadHouseImageSerializer
+
+    @swagger_auto_schema(
+        operation_summary="매물 사진 등록 API",
+        responses={200: "등록 성공", 400: "오류 메세지 확인"},
+    )
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)

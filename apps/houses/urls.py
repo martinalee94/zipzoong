@@ -4,6 +4,8 @@ from .views import (
     UploadAddressView,
     UploadCharterPriceView,
     UploadContractTypeView,
+    UploadHouseImageView,
+    UploadHouseOptionView,
     UploadMonthlyPriceView,
     UploadSellPriceView,
 )
@@ -16,4 +18,6 @@ urlpatterns = [
     path("monthly-price/<int:id>", UploadMonthlyPriceView.as_view(), name="save_monthly_price"),
     path("charter-price/<int:id>", UploadCharterPriceView.as_view(), name="save_charter_price"),
     path("sell-price/<int:id>", UploadSellPriceView.as_view(), name="save_sell_price"),
+    path("options/<int:id>", UploadHouseOptionView.as_view(), name="save_house_option"),
+    path("images/<int:id>", UploadHouseImageView.as_view(), name="save_house_images"),
 ]

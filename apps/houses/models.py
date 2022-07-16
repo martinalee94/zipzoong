@@ -1,7 +1,10 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from apps.commons.models import TimeStampModel
 from apps.users.models import Agent, Seller
+from apps.users.utils import get_seller_from_header
 
 
 class House(TimeStampModel, models.Model):
@@ -26,3 +29,46 @@ class House(TimeStampModel, models.Model):
 
     class Meta:
         db_table = "house"
+
+
+class HouseOption(TimeStampModel, models.Model):
+    house = models.OneToOneField(House, related_name="options", on_delete=models.CASCADE)
+    # TODO: 옵션 종류 협의 필요
+    aircon = models.SmallIntegerField(verbose_name="에어컨", null=True)
+    bath = models.SmallIntegerField(verbose_name="화장실", null=True)
+
+    class Meta:
+        db_table = "house_option"
+
+
+@receiver(post_save, sender=House)
+def create_house(sender, instance, created, **kwargs):
+    if created:
+        HouseOption.objects.create(house=instance)
+
+
+class HouseImage(TimeStampModel, models.Model):
+    def get_upload_path(instance, filename):
+        filetype = filename.split(".")[-1]
+        device = instance.house.seller.device
+        house_id = instance.house.id
+        idx = HouseImage.objects.filter(house__id=house_id).count() + 1
+        return f"house/{device}/{house_id}/{idx}.{filetype}"
+
+    house = models.ForeignKey(House, related_name="images", unique=False, on_delete=models.CASCADE)
+    path = models.ImageField(
+        verbose_name="사진경로",
+        blank=True,
+        upload_to=get_upload_path,
+        width_field="width",
+        height_field="height",
+    )
+    # name = models.CharField(verbose_name="사진명", max_length=256, editable=False)
+    type = models.CharField(verbose_name="사진 확장자", max_length=256, editable=False, default="png")
+    size = models.IntegerField(verbose_name="사진 사이즈", editable=False)
+    width = models.IntegerField(verbose_name="사진 가로 길이", editable=False)
+    height = models.IntegerField(verbose_name="사진 세로 길이", editable=False)
+    wh_type = models.SmallIntegerField(verbose_name="사진 크기 타입", editable=False, default=0)
+
+    class Meta:
+        db_table = "house_image"
