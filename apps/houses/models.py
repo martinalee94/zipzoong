@@ -21,7 +21,7 @@ class House(TimeStampModel, models.Model):
     detail_addr = models.CharField(verbose_name="상세주소", max_length=256, null=True)
     postal_code = models.CharField(verbose_name="우편번호", max_length=6, null=True)
     seller = models.ForeignKey(
-        Seller, related_name="house", on_delete=models.CASCADE, db_index=True, default="deleted"
+        Seller, related_name="house", on_delete=models.CASCADE, db_index=True
     )
 
     class Meta:
