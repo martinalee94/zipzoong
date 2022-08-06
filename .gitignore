@@ -198,3 +198,4 @@ $RECYCLE.BIN/
 
 .vscode
 migrations/
+logs/
