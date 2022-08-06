@@ -1,0 +1,35 @@
+services:
+  server:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/app
+    command: sh -c "python3 manage.py makemigrations && 
+            python3 manage.py migrate --noinput && 
+            python3 manage.py runserver 0:8000"
+    expose:
+      - "8000"
+    ports:
+      - 8000:8000
+    depends_on:
+      - mariadb
+    networks:
+      - myNetwork
+      
+  mariadb:
+    image: mariadb:10
+    env_file:
+      - .env
+    ports:
+      - 3307:3306
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+        - "./mariadb/conf.d:/etc/mysql/conf.d"
+    networks:
+      - myNetwork
+
+networks:
+  myNetwork:

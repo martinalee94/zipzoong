@@ -1,6 +1,6 @@
-from .base import *
+from .base import *  # noqa: F403
 
-class ProductionConfig():
+
+class ProductionConfig:
     DEBUG = False
-    ALLOWED_HOSTS = ['localhost'] #TODO: 추후 서버 주소 추가 필요
-
+    ALLOWED_HOSTS = ["localhost"]  # TODO: 추후 서버 주소 추가 필요
