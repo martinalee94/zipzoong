@@ -11,6 +11,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+LOCAL_APPS = ['apps.houses']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -19,7 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+] + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -51,17 +52,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DEV_DB_NAME'), 
+        'USER': os.environ.get('DEV_DB_USER'),
+        'PASSWORD': os.environ.get('DEV_DB_PASSWORD'),
+        'HOST': os.environ.get('DEV_DB_HOST'),
+        'PORT': os.environ.get('DEV_DB_PORT')
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
