@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -16,6 +17,8 @@ THIRD_APPS = [
     "corsheaders",
     "drf_yasg",
     "rest_framework",
+    "ninja_jwt",
+    'ninja_extra',
 ]
 USER_APPS = [
     "apps.houses",
@@ -67,21 +70,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("DEV_DB_NAME"),
-        "USER": os.getenv("DEV_DB_USER"),
-        "PASSWORD": os.getenv("DEV_DB_PASSWORD"),
-        "HOST": os.getenv("DEV_DB_HOST"),
-        "PORT": os.getenv("DEV_DB_PORT"),
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -129,4 +117,19 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "config.renderers.CustomRenderer",
     ]
+}
+
+# JWT
+NINJA_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'USER_ID_FIELD': 'id',
+    'USER_AUTHENTICATION_RULE': 'ninja_jwt.authentication.default_user_authentication_rule',
+
+    'AUTH_TOKEN_CLASSES': ('ninja_jwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'ninja_jwt.models.TokenUser',
 }
