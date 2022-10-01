@@ -11,10 +11,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Application definition
-LOCAL_APPS = ['apps.houses']
-
-
 THIRD_APPS = [
     "corsheaders",
     "drf_yasg",

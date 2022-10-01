@@ -29,17 +29,6 @@ class Seller(models.Model):
         db_table = "seller"
 
 
-# class Seller(models.Model):
-#     id = models.CharField(max_length=32, primary_key=True, verbose_name="server-created-key")
-#     phone = models.CharField(max_length=20, null=True)
-#     client_secret = models.CharField(max_length=12, verbose_name="client-created-key")
-
-#     def save(self, *args, **kwargs):
-#         if not self.id:
-#             self.id = uuid4()
-#         return super().save(*args, **kwargs)
-
-
 # class Agent(models.Model):
 #     phone = models.CharField(max_length=20)
 
