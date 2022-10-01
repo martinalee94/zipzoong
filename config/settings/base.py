@@ -12,6 +12,8 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+LOCAL_APPS = ['apps.houses']
+
 
 THIRD_APPS = [
     "corsheaders",
@@ -35,6 +37,7 @@ INSTALLED_APPS = (
     + THIRD_APPS
     + USER_APPS
 )
+
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -64,6 +67,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = "config.wsgi.application"
 
