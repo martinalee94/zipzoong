@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-
-
 class APIExceptionErrorCodes:
     BAD_REQUEST = (400, "bad_request")
     UNAUTHORIZED = (401, "unauthorized")
