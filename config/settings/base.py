@@ -16,9 +16,7 @@ ALLOWED_HOSTS = []
 THIRD_APPS = [
     "corsheaders",
     "drf_yasg",
-    "rest_framework",
-    "ninja_jwt",
-    'ninja_extra',
+    "ninja_extra",
 ]
 USER_APPS = [
     "apps.houses",
@@ -121,15 +119,13 @@ REST_FRAMEWORK = {
 
 # JWT
 NINJA_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
-    'UPDATE_LAST_LOGIN': False,
-
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'USER_ID_FIELD': 'id',
-    'USER_AUTHENTICATION_RULE': 'ninja_jwt.authentication.default_user_authentication_rule',
-
-    'AUTH_TOKEN_CLASSES': ('ninja_jwt.tokens.AccessToken',),
-    'TOKEN_TYPE_CLAIM': 'token_type',
-    'TOKEN_USER_CLASS': 'ninja_jwt.models.TokenUser',
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
+    "UPDATE_LAST_LOGIN": False,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "USER_ID_FIELD": "id",
+    "USER_AUTHENTICATION_RULE": "ninja_jwt.authentication.default_user_authentication_rule",
+    "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "TOKEN_USER_CLASS": "ninja_jwt.models.TokenUser",
 }
