@@ -4,6 +4,7 @@ from ninja import File
 from ninja.files import UploadedFile
 from ninja_extra import api_controller, route
 
+from apps.commons.core import AuthBearer
 from apps.commons.exceptions import APIException, APIExceptionErrorCodes
 
 from . import services
@@ -19,7 +20,7 @@ from .schemas import (
 )
 
 
-@api_controller("/houses", tags=["Houses"])
+@api_controller("/houses", tags=["Houses"], auth=AuthBearer())
 class HouseAPIController:
     @route.post("/address", url_name="saveAddress", response={200: CreateHouseAddressOutSchema})
     def save_address(self, addr_info: CreateHouseAddressInSchema):
