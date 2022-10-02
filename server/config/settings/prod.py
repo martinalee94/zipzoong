@@ -3,7 +3,7 @@ import os
 from .base import *  # noqa: F403
 
 DEBUG = False
-ALLOWED_HOSTS = ["localhost"]  # TODO: 추후 서버 주소 추가 필요
+ALLOWED_HOSTS = ["zipzoong.com"]
 
 DATABASES = {
     "default": {
