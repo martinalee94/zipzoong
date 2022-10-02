@@ -1,14 +1,14 @@
 services:
   server:
-    container_name: zipzoong-server
-    build: .
+    container_name: zipzoong-server-dev
+    build: 
+      context: ./server
     env_file:
-      - .env
+      - server/.env
     volumes:
       - .:/usr/src/app
-    command: sh -c "python3 manage.py makemigrations && 
-            python3 manage.py migrate --noinput && 
-            python3 manage.py runserver 0:8000"
+    command: sh -c "python3 server/manage.py migrate --noinput &&
+        python3 server/manage.py runserver 0:8000"
     expose:
       - "8000"
     ports:
@@ -16,16 +16,17 @@ services:
     restart: unless-stopped
     depends_on:
       - db
+    links:
+      - db
       
   db:
-    container_name: zipzoong-db
+    container_name: zipzoong-db-dev
     image: mysql
     env_file:
-      - .env
+      - server/.env
     ports:
       - 3307:3306
     restart: unless-stopped
     environment:
       - TZ=Asia/Seoul
-    volumes:
-      - ./.mysql/:/var/lib/mysql/
+    

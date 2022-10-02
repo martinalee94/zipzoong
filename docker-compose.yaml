@@ -1,13 +1,15 @@
 services:
   server:
-    build: .
+    container_name: zipzoong-server-prod
+    build: 
+      context: ./server
     env_file:
-      - .env
+      - server/.env
     volumes:
       - .:/usr/src/app
-    command: sh -c "python3 manage.py makemigrations && 
-            python3 manage.py migrate --noinput && 
-            gunicorn --bind 0:8000 config.wsgi:application"
+    command: sh -c "python3 server/manage.py migrate --noinput &&
+        python server/manage.py collectstatic --noinput &&
+        gunicorn --bind 0:8000 config.wsgi:application"
     expose:
       - "8000"
     ports:
@@ -16,9 +18,10 @@ services:
       - db
       
   db:
+    container_name: zipzoong-db-prod
     image: mysql
     env_file:
-      - .env
+      - server/.env
     ports:
       - 3308:3306
     restart: unless-stopped
