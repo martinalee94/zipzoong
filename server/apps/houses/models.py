@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from django.db import models
+from django.utils import timezone
 
 
 class House(models.Model):
@@ -55,4 +56,15 @@ class HouseDetail(models.Model):
 
 
 class HouseImage(models.Model):
-    pass
+    house = models.ForeignKey(House, to_field="id", related_name="images", on_delete=models.CASCADE)
+    path = models.CharField(verbose_name="사진 경로", max_length=256, null=True)
+    name = models.CharField(verbose_name="사진명", max_length=256, null=True)
+    type = models.CharField(verbose_name="사진 확장자", max_length=16, null=True)
+    size = models.PositiveIntegerField(verbose_name="사진 사이즈", null=True)
+    width = models.PositiveSmallIntegerField(verbose_name="사진 가로 길이", null=True)
+    height = models.PositiveSmallIntegerField(verbose_name="사진 세로 길이", null=True)
+    wh_type = models.SmallIntegerField(verbose_name="사진 크기 타입", null=True)
+    created_dt = models.DateTimeField(verbose_name="생성 날짜", auto_now_add=True)
+
+    class Meta:
+        db_table = "house_image"

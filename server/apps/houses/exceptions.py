@@ -8,3 +8,11 @@ class HouseNotFound(Exception):
 
 class HouseDetailAlreadyExist(Exception):
     pass
+
+
+class ImageTypeIsNotAllowed(Exception):
+    pass
+
+
+class ImageSizeIsExceeded(Exception):
+    pass
