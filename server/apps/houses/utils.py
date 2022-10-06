@@ -6,3 +6,6 @@ OPTION_CODE = {
     2040: "restroom",
     2050: "duplex",
 }
+
+ALLOWED_IMAGE_TYPE = ["jpg", "jpeg", "png"]
+ALLOWED_IMAGE_SIZE = 5 * 1024 * 1024

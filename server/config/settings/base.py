@@ -117,16 +117,3 @@ REST_FRAMEWORK = {
         "config.renderers.CustomRenderer",
     ]
 }
-
-# JWT
-NINJA_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
-    "UPDATE_LAST_LOGIN": False,
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": SECRET_KEY,
-    "USER_ID_FIELD": "id",
-    "USER_AUTHENTICATION_RULE": "ninja_jwt.authentication.default_user_authentication_rule",
-    "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.AccessToken",),
-    "TOKEN_TYPE_CLAIM": "token_type",
-    "TOKEN_USER_CLASS": "ninja_jwt.models.TokenUser",
-}

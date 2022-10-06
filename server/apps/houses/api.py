@@ -1,3 +1,5 @@
+import asyncio
+from datetime import datetime
 from typing import List
 
 from ninja import File
@@ -8,7 +10,7 @@ from apps.commons.core import AuthBearer
 from apps.commons.exceptions import APIException, APIExceptionErrorCodes
 
 from . import services
-from .exceptions import HouseNotFound, SellerNotFound
+from .exceptions import HouseNotFound, ImageSizeIsExceeded, ImageTypeIsNotAllowed, SellerNotFound
 from .schemas import (
     CreateHouseAddressInSchema,
     CreateHouseAddressOutSchema,
@@ -54,7 +56,7 @@ class HouseAPIController:
             services.update_house_monthly_price(house_id, **monthly_price.__dict__)
         except HouseNotFound:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="House id is invalid")
-        return 204
+        return
 
     @route.post("/{house_id}/char", url_name="saveCharterPrice", response={204: None})
     def save_charter_price(self, house_id: str, char_price: UpdateHouseCharterPriceInSchema):
@@ -69,7 +71,7 @@ class HouseAPIController:
             services.update_house_charter_price(house_id, **char_price.__dict__)
         except HouseNotFound:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="House id is invalid")
-        return 204
+        return
 
     @route.post("/{house_id}/sale", url_name="saveSalePrice", response={204: None})
     def save_sale_price(self, house_id: str, sale_price: UpdateHouseSalePriceInSchema):
@@ -84,7 +86,7 @@ class HouseAPIController:
             services.update_house_sale_price(house_id, **sale_price.__dict__)
         except HouseNotFound:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="House id is invalid")
-        return 204
+        return
 
     @route.get(
         "/default-options",
@@ -118,8 +120,56 @@ class HouseAPIController:
             services.update_house_options(house_id, **selected_option.__dict__)
         except HouseNotFound:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="House id is invalid")
-        return 204
+        return
 
-    @route.post("/{house_id}/image", url_name="saveImage")
-    async def save_house_images(self, house_id: str, files: List[UploadedFile] = File(...)):
+    @route.post(
+        "/{house_id}/image",
+        url_name="saveImage",
+        response={204: None},
+    )
+    async def save_house_images(self, house_id: str, images: List[UploadedFile] = File(...)):
+        try:
+            event_loop = []
+            file_date_key = datetime.now().strftime("%Y%m%d%H%M%S")
+            # for n, image in enumerate(images):
+            #     event_loop.append(
+            #         services.add_house_images(
+            #             n=n, house_id=house_id, image=image, file_date_key=file_date_key
+            #         )
+            #     )
+            # print(*event_loop)
+            # await asyncio.gather(*event_loop)
+            # for image in images:
+            #     asyncio.create_task(
+            #         services.add_house_images(
+            #             house_id=house_id, image=image, file_date_key=file_date_key
+            #         )
+            #     )
+
+            for image in images:
+                await services.add_house_images(
+                    house_id=house_id, image=image, file_date_key=file_date_key
+                )
+        except HouseNotFound:
+            raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="House id is invalid")
+        except ImageSizeIsExceeded:
+            raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="Image is too big")
+        except ImageTypeIsNotAllowed:
+            raise APIException(
+                APIExceptionErrorCodes.BAD_REQUEST,
+                message="File type is not allowed - (jpg, jpeg, png)",
+            )
+        return
+
+    @route.get(
+        "/{house_id}/image",
+        url_name="getHouseImage",
+        response={204: None},
+    )
+    async def get_house_images(self, house_id: str):
+        try:
+            await services.get_house_images(house_id=house_id)
+        except HouseNotFound:
+            raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="House id is invalid")
+
         return

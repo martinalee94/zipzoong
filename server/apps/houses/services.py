@@ -1,10 +1,26 @@
+import os
+from datetime import datetime
+from pathlib import Path
+from random import randrange
+
+from asgiref.sync import sync_to_async
+from config.settings.base import MEDIA_ROOT
 from django.core.exceptions import ObjectDoesNotExist
+from PIL import Image
 
 from apps.users.models import Seller
 
-from .exceptions import HouseNotFound, SellerNotFound
-from .models import House, HouseDetail, HouseOptionCode
-from .utils import OPTION_CODE
+from .exceptions import HouseNotFound, ImageSizeIsExceeded, ImageTypeIsNotAllowed, SellerNotFound
+from .models import House, HouseDetail, HouseImage, HouseOptionCode
+from .utils import ALLOWED_IMAGE_SIZE, ALLOWED_IMAGE_TYPE, OPTION_CODE
+
+
+def _check_house_exist(house_id):
+    try:
+        house = House.objects.get(id=house_id)
+    except ObjectDoesNotExist:
+        raise HouseNotFound
+    return house
 
 
 def add_house(
@@ -30,33 +46,24 @@ def add_house(
 
 
 def update_house_monthly_price(house_id: str, deposit: int, monthly_rent: int):
-    try:
-        house = House.objects.get(id=house_id)
-        house.monthly_deposit = deposit
-        house.monthly_rent = monthly_rent
-        house.save()
-    except ObjectDoesNotExist:
-        raise HouseNotFound
+    house = _check_house_exist(house_id)
+    house.monthly_deposit = deposit
+    house.monthly_rent = monthly_rent
+    house.save()
     return
 
 
 def update_house_charter_price(house_id: str, charter_rent: int):
-    try:
-        house = House.objects.get(id=house_id)
-        house.charter_rent = charter_rent
-        house.save()
-    except ObjectDoesNotExist:
-        raise HouseNotFound
+    house = _check_house_exist(house_id)
+    house.charter_rent = charter_rent
+    house.save()
     return
 
 
 def update_house_sale_price(house_id: str, sale_price: int):
-    try:
-        house = House.objects.get(id=house_id)
-        house.sale_price = sale_price
-        house.save()
-    except ObjectDoesNotExist:
-        raise HouseNotFound
+    house = _check_house_exist(house_id)
+    house.sale_price = sale_price
+    house.save()
     return
 
 
@@ -80,10 +87,7 @@ def update_house_options(
     restroom: str = None,
     duplex: str = None,
 ):
-    try:
-        house = House.objects.get(id=house_id)
-    except ObjectDoesNotExist:
-        raise HouseNotFound
+    house = _check_house_exist(house_id)
 
     house_detail = HouseDetail.objects.get_or_create(house=house)[0]
     house_detail.type_option = type
@@ -93,3 +97,84 @@ def update_house_options(
     house_detail.duplex_option = duplex
     house_detail.save()
     return house_detail
+
+
+@sync_to_async
+def add_house_images(house_id, image, file_date_key):
+    house = _check_house_exist(house_id)
+
+    if image.size > ALLOWED_IMAGE_SIZE:
+        raise ImageSizeIsExceeded
+    origin_image_type = image.name.split(".")[-1].lower()
+    if origin_image_type not in ALLOWED_IMAGE_TYPE:
+        raise ImageTypeIsNotAllowed
+
+    # 파일이름 "houseid_filedatekey_filenamekey"
+    file_name_key = randrange(10000000, 99999999)
+
+    origin_image = Image.open(image)
+    origin_width, origin_height = origin_image.size
+
+    Path(MEDIA_ROOT + f"/{house_id}/{file_date_key}").mkdir(parents=True, exist_ok=True)
+    path = (
+        MEDIA_ROOT + f"/{house_id}/{file_date_key}/{house_id}_{file_date_key}_{file_name_key}.png"
+    )
+    origin_image.save(path, "PNG")
+
+    image = HouseImage(
+        house=house,
+        path=path,
+        name=f"{house_id}_{file_date_key}_{file_name_key}.png",
+        type="png",
+        size=image.size,
+        width=origin_width,
+        height=origin_height,
+        wh_type=1,
+    )
+    image.save()
+    return
+
+
+# @sync_to_async
+# def add_house_images(house_id, images):
+#     house = _check_house_exist(house_id)
+
+#     for image in images:
+#         if image.size > ALLOWED_IMAGE_SIZE:
+#             raise ImageSizeIsExceeded
+#         origin_image_type = image.name.split(".")[-1].lower()
+#         if origin_image_type not in ALLOWED_IMAGE_TYPE:
+#             raise ImageTypeIsNotAllowed
+
+#     # 파일이름 "houseid_filedatekey_filenamekey"
+#     file_date_key = datetime.now().strftime("%Y%m%d%H%M%S")
+#     for image in images:
+#         file_name_key = randrange(10000000, 99999999)
+
+#         origin_image = Image.open(image)
+#         origin_width, origin_height = origin_image.size
+
+#         Path(MEDIA_ROOT + f"/{house_id}/{file_date_key}").mkdir(parents=True, exist_ok=True)
+#         path = (
+#             MEDIA_ROOT
+#             + f"/{house_id}/{file_date_key}/{house_id}_{file_date_key}_{file_name_key}.png"
+#         )
+#         origin_image.save(path, "PNG")
+
+#         image = HouseImage(
+#             house=house,
+#             path=path,
+#             name=f"{house_id}_{file_date_key}_{file_name_key}.png",
+#             type="png",
+#             size=image.size,
+#             width=origin_width,
+#             height=origin_height,
+#             wh_type=1,
+#         )
+#         image.save()
+
+#     return
+
+
+def get_house_images(house_id):
+    return
