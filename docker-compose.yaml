@@ -9,7 +9,7 @@ services:
       - .:/usr/src/app
     command: sh -c "python3 server/manage.py migrate --noinput &&
         python server/manage.py collectstatic --noinput &&
-        gunicorn --bind 0:8000 config.wsgi:application"
+        gunicorn --bind 0:8000 server.config.wsgi:application"
     expose:
       - "8000"
     ports:
