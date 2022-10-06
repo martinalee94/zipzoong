@@ -29,8 +29,10 @@ class House(models.Model):
 
 class HouseOptionCode(models.Model):
     type = models.PositiveSmallIntegerField()
-    value = models.CharField(max_length=50, unique=True)
+    key = models.PositiveIntegerField()
+    value = models.CharField(max_length=50)
     created_dt = models.DateTimeField(verbose_name="생성 날짜", auto_now_add=True)
+    modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
 
     class Meta:
         db_table = "house_option_code"

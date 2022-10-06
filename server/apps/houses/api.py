@@ -42,6 +42,14 @@ class HouseAPIController:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="Seller id is invalid")
         return house
 
+    @route.get(
+        "/default-contract-type",
+        url_name="getContractType",
+    )
+    def get_contract_type(self):
+        contract_types = services.get_default_house_contract_type_list()
+        return contract_types
+
     @route.post("/{house_id}/mont", url_name="saveMonthlyPrice", response={204: None})
     def save_monthly_price(self, house_id: str, monthly_price: UpdateHouseMonthlyPriceInSchema):
         """

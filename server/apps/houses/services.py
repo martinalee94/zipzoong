@@ -45,6 +45,14 @@ def add_house(
     return house
 
 
+def get_default_house_contract_type_list():
+    result = {}
+    contract_types = HouseOptionCode.objects.filter(type=1001)
+    for contract_type in contract_types:
+        result[contract_type.key] = contract_type.value
+    return result
+
+
 def update_house_monthly_price(house_id: str, deposit: int, monthly_rent: int):
     house = _check_house_exist(house_id)
     house.monthly_deposit = deposit
