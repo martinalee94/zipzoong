@@ -123,7 +123,7 @@ def add_house_images(house_id, image, file_date_key):
 
     image = HouseImage(
         house=house,
-        path=path,
+        path=f"/{house_id}/{file_date_key}/{house_id}_{file_date_key}_{file_name_key}.png",
         name=f"{house_id}_{file_date_key}_{file_name_key}.png",
         type="png",
         size=image.size,
