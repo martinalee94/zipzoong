@@ -99,7 +99,6 @@ class HouseAPIController:
     @route.get(
         "/default-options",
         url_name="getAllOptions",
-        response=ListHouseDefaultOptionsOutSchema,
     )
     def get_all_default_house_options(self):
         house_options = services.get_default_house_options_list()

@@ -1,5 +1,7 @@
 from ninja_schema import ModelSchema, Schema
 
+from .models import HouseOptionCode
+
 
 class DefaultOutSchema(Schema):
     respCode: int

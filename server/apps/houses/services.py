@@ -76,14 +76,13 @@ def update_house_sale_price(house_id: str, sale_price: int):
 
 
 def get_default_house_options_list():
-    option_codes = HouseOptionCode.objects.all()
     result = {}
+    option_codes = HouseOptionCode.objects.filter(type__gte=2000, type__lt=3000)
     for code in option_codes:
-        option_type = OPTION_CODE[code.type]
-        if not result.get(option_type):
-            result[option_type] = [code.value]
+        if result.get(code.type):
+            result[code.type][code.key] = code.value
         else:
-            result[option_type].append(code.value)
+            result[code.type] = {code.key: code.value}
     return result
 
 
