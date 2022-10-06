@@ -45,6 +45,14 @@ def add_house(
     return house
 
 
+def get_default_house_contract_type_list():
+    result = {}
+    contract_types = HouseOptionCode.objects.filter(type=1001)
+    for contract_type in contract_types:
+        result[contract_type.key] = contract_type.value
+    return result
+
+
 def update_house_monthly_price(house_id: str, deposit: int, monthly_rent: int):
     house = _check_house_exist(house_id)
     house.monthly_deposit = deposit
@@ -68,14 +76,13 @@ def update_house_sale_price(house_id: str, sale_price: int):
 
 
 def get_default_house_options_list():
-    option_codes = HouseOptionCode.objects.all()
     result = {}
+    option_codes = HouseOptionCode.objects.filter(type__gte=2000, type__lt=3000)
     for code in option_codes:
-        option_type = OPTION_CODE[code.type]
-        if not result.get(option_type):
-            result[option_type] = [code.value]
+        if result.get(code.type):
+            result[code.type][code.key] = code.value
         else:
-            result[option_type].append(code.value)
+            result[code.type] = {code.key: code.value}
     return result
 
 
@@ -123,7 +130,7 @@ def add_house_images(house_id, image, file_date_key):
 
     image = HouseImage(
         house=house,
-        path=path,
+        path=f"/{house_id}/{file_date_key}/{house_id}_{file_date_key}_{file_name_key}.png",
         name=f"{house_id}_{file_date_key}_{file_name_key}.png",
         type="png",
         size=image.size,
