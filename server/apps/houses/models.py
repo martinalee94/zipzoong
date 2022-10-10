@@ -3,6 +3,8 @@ from uuid import uuid4
 from django.db import models
 from django.utils import timezone
 
+from apps.users.models import Seller
+
 
 class House(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
@@ -17,6 +19,9 @@ class House(models.Model):
     monthly_deposit = models.PositiveIntegerField(null=True)
     created_dt = models.DateTimeField(verbose_name="생성 날짜", db_index=True, auto_now_add=True)
     modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
+    seller = models.ForeignKey(
+        Seller, to_field="id", on_delete=models.CASCADE, related_name="house"
+    )
 
     @classmethod
     def create_house(cls, **kwargs):
