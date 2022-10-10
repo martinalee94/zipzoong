@@ -41,6 +41,7 @@ def add_house(
         street_addr=street_addr,
         detail_addr=detail_addr,
         postal_code=postal_code,
+        seller=seller[0],
     )
     return house
 
