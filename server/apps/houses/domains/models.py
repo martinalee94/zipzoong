@@ -4,8 +4,6 @@ from apps.users.domains.models import Seller
 from django.db import models
 from django.utils import timezone
 
-from apps.users.models import Seller
-
 
 class House(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
