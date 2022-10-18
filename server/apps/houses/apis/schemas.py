@@ -1,6 +1,6 @@
 from ninja_schema import ModelSchema, Schema
 
-from .models import HouseOptionCode
+from ..domains.models import HouseDetail, HouseImage, HouseOptionCode
 
 
 class DefaultOutSchema(Schema):
@@ -34,12 +34,15 @@ class UpdateHouseSalePriceInSchema(Schema):
 
 
 class ListHouseDefaultOptionsOutSchema(ModelSchema):
-    contract_type: list = None
-    house_type: list = None
-    floor: list = None
-    room: list = None
-    restroom: list = None
-    duplex: list = None
+    class Config:
+        model = HouseDetail
+        exclude = ["created_dt", "modified_dt"]
+
+
+class ListHouseImagesOutSchema(ModelSchema):
+    class Config:
+        model = HouseImage
+        include = ["path"]
 
 
 class UpdateHouseSelectedOptionsInSchema(Schema):
@@ -48,3 +51,16 @@ class UpdateHouseSelectedOptionsInSchema(Schema):
     room: str = None
     restroom: str = None
     duplex: str = None
+
+
+class ListHouseInfoListInSchema(Schema):
+    page_num: int
+    info_num: int
+
+
+class ListHouseInfoListOutSchema(Schema):
+    address: str
+    contract_type: str
+    contract_detail: dict
+    options: ListHouseDefaultOptionsOutSchema = None
+    images: ListHouseImagesOutSchema = None
