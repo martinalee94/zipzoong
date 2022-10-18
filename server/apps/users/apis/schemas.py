@@ -1,6 +1,6 @@
 from ninja_schema import ModelSchema, Schema
 
-from .models import Seller
+from ..domains.models import Seller
 
 
 class GetTokenInSchema(ModelSchema):

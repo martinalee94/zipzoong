@@ -2,8 +2,8 @@ import json
 from typing import Any
 
 from apps.commons.exceptions import APIException as CustomAPIException
-from apps.houses.api import HouseAPIController
-from apps.users.api import MyTokenAPIController, UserAPIController
+from apps.houses.apis.api import HouseAPIController
+from apps.users.apis.api import MyTokenAPIController, UserAPIController
 from django.http import HttpRequest
 from ninja.renderers import JSONRenderer
 from ninja.responses import Response

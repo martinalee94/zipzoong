@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+from apps.users.domains.models import Seller
 from django.db import models
 from django.utils import timezone
 
@@ -14,6 +15,7 @@ class House(models.Model):
     detail_addr = models.CharField(max_length=256, null=True)
     postal_code = models.CharField(max_length=6, null=True)
     sale_price = models.PositiveIntegerField(null=True)
+    contract_type = models.CharField(max_length=10, null=True)
     charter_rent = models.PositiveIntegerField(null=True)
     monthly_rent = models.PositiveIntegerField(null=True)
     monthly_deposit = models.PositiveIntegerField(null=True)

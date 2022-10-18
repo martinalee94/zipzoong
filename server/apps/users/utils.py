@@ -24,7 +24,9 @@ class ClientToken:
     @classmethod
     def decode(cls, encoded_token):
         try:
-            jwt.decode(encoded_token, os.environ.get("SECRET_KEY"), algorithms=["HS256"])
+            decoded_token = jwt.decode(
+                encoded_token, os.environ.get("SECRET_KEY"), algorithms=["HS256"]
+            )
         except Exception as e:
             return False
-        return True
+        return decoded_token

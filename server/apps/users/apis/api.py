@@ -1,9 +1,8 @@
+from apps.commons.exceptions import APIException, APIExceptionErrorCodes
 from ninja_extra import api_controller, route
 
-from apps.commons.exceptions import APIException, APIExceptionErrorCodes
-
-from . import services
-from .exceptions import SellerAlreadyExist, SellerDoesNotExist
+from ..exceptions import SellerAlreadyExist, SellerDoesNotExist
+from ..services import services
 from .schemas import (
     CreateSellerServerIdInSchema,
     CreateSellerServerIdOutSchema,

@@ -3,15 +3,17 @@ from datetime import datetime
 from pathlib import Path
 from random import randrange
 
+from apps.users.domains.models import Seller
+from apps.users.utils import ClientToken
 from asgiref.sync import sync_to_async
 from config.settings.base import MEDIA_ROOT
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from PIL import Image
 
-from apps.users.models import Seller
-
-from .exceptions import HouseNotFound, ImageSizeIsExceeded, ImageTypeIsNotAllowed, SellerNotFound
-from .models import House, HouseDetail, HouseImage, HouseOptionCode
+from ..domains.models import House, HouseDetail, HouseImage, HouseOptionCode
+from ..exceptions import HouseNotFound, ImageSizeIsExceeded, ImageTypeIsNotAllowed, SellerNotFound
+from .enums import ContractTypes
 from .utils import ALLOWED_IMAGE_SIZE, ALLOWED_IMAGE_TYPE, OPTION_CODE
 
 
@@ -43,6 +45,7 @@ def add_house(
         postal_code=postal_code,
         seller=seller[0],
     )
+    HouseDetail.objects.create(house=house)
     return house
 
 
@@ -58,6 +61,7 @@ def update_house_monthly_price(house_id: str, deposit: int, monthly_rent: int):
     house = _check_house_exist(house_id)
     house.monthly_deposit = deposit
     house.monthly_rent = monthly_rent
+    house.contract_type = ContractTypes.MONTHLY_RENT
     house.save()
     return
 
@@ -65,6 +69,7 @@ def update_house_monthly_price(house_id: str, deposit: int, monthly_rent: int):
 def update_house_charter_price(house_id: str, charter_rent: int):
     house = _check_house_exist(house_id)
     house.charter_rent = charter_rent
+    house.contract_type = ContractTypes.CHARTERED_RENT
     house.save()
     return
 
@@ -72,6 +77,7 @@ def update_house_charter_price(house_id: str, charter_rent: int):
 def update_house_sale_price(house_id: str, sale_price: int):
     house = _check_house_exist(house_id)
     house.sale_price = sale_price
+    house.contract_type = ContractTypes.SALE
     house.save()
     return
 
@@ -184,5 +190,36 @@ def add_house_images(house_id, image, file_date_key):
 #     return
 
 
-def get_house_images(house_id):
-    return
+def get_house_info_list(decoded_token, page_num=10, info_num=1):
+    result = []
+    seller_id = decoded_token["id"]
+
+    houses = House.objects.filter(seller_id=seller_id).order_by("created_dt")
+    houses = Paginator(houses, page_num).page(info_num).object_list
+    print(houses)
+    for house in houses:
+        house_dict = {}
+        full_addr = house.sido_addr + house.gungu_addr + house.street_addr + house.detail_addr
+        options = {
+            "type": house.detail.type_option,
+            "floor": house.detail.floor_option,
+            "room": house.detail.rooms_option,
+            "restroom": house.detail.restroom_option,
+            "duplex": house.detail.duplex_option,
+        }
+        contract_detail = {}
+        if house.detail.type_option == ContractTypes.SALE:
+            contract_detail["sale_price"] = house.sale_price
+        elif house.detail.type_option == ContractTypes.CHARTERED_RENT:
+            contract_detail["charter_rent"] = house.charter_rent
+        elif house.detail.type_option == ContractTypes.MONTHLY_RENT:
+            contract_detail["monthly_deposit"] = house.monthly_deposit
+            contract_detail["monthly_rent"] = house.monthly_rent
+        house_dict["id"] = house.id
+        house_dict["address"] = full_addr
+        house_dict["contract_type"] = house.contract_type
+        house_dict["contract_detail"] = contract_detail
+        house_dict["options"] = options
+        house_dict["images"] = "hi"
+        result.append(house_dict)
+    return result

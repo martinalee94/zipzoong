@@ -2,19 +2,19 @@ import asyncio
 from datetime import datetime
 from typing import List
 
+from apps.commons.core import AuthBearer
+from apps.commons.exceptions import APIException, APIExceptionErrorCodes
 from ninja import File
 from ninja.files import UploadedFile
 from ninja_extra import api_controller, route
 
-from apps.commons.core import AuthBearer
-from apps.commons.exceptions import APIException, APIExceptionErrorCodes
-
-from . import services
-from .exceptions import HouseNotFound, ImageSizeIsExceeded, ImageTypeIsNotAllowed, SellerNotFound
+from ..exceptions import HouseNotFound, ImageSizeIsExceeded, ImageTypeIsNotAllowed, SellerNotFound
+from ..services import services
 from .schemas import (
     CreateHouseAddressInSchema,
     CreateHouseAddressOutSchema,
-    ListHouseDefaultOptionsOutSchema,
+    ListHouseInfoListInSchema,
+    ListHouseInfoListOutSchema,
     UpdateHouseCharterPriceInSchema,
     UpdateHouseMonthlyPriceInSchema,
     UpdateHouseSalePriceInSchema,
@@ -168,15 +168,16 @@ class HouseAPIController:
             )
         return
 
-    @route.get(
-        "/{house_id}/image",
-        url_name="getHouseImage",
-        response={204: None},
+    @route.post(
+        "/list",
+        url_name="getHouseInfo",
+        response={200: ListHouseInfoListOutSchema},
     )
-    async def get_house_images(self, house_id: str):
+    def get_house_list(self, request, body: ListHouseInfoListInSchema):
         try:
-            await services.get_house_images(house_id=house_id)
+            result = services.get_house_info_list(request.auth, **body.__dict__)
+            result = ListHouseInfoListOutSchema.dict(result)
         except HouseNotFound:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="House id is invalid")
 
-        return
+        return result

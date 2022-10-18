@@ -2,9 +2,9 @@ from http import client
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from .exceptions import SellerAlreadyExist, SellerDoesNotExist
-from .models import Seller
-from .utils import ClientToken
+from ..domains.models import Seller
+from ..exceptions import SellerAlreadyExist, SellerDoesNotExist
+from ..utils import ClientToken
 
 
 def issue_access_token(id, client_secret):
