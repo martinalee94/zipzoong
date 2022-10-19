@@ -1,6 +1,7 @@
 import json
 from typing import Any
 
+from apps.brokers.apis.api import BrokerAPIController
 from apps.commons.exceptions import APIException as CustomAPIException
 from apps.houses.apis.api import HouseAPIController
 from apps.users.apis.api import MyTokenAPIController, UserAPIController
@@ -41,3 +42,4 @@ def custom_api_exception_handler(req, exc):
 api.register_controllers(MyTokenAPIController)
 api.register_controllers(UserAPIController)
 api.register_controllers(HouseAPIController)
+api.register_controllers(BrokerAPIController)
