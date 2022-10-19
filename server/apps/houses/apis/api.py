@@ -29,8 +29,9 @@ class HouseAPIController:
         """
         ## Body
             seller_id(의뢰인 서버쪽 id)
+            full_addr(전체주소))
             sido_addr(시도 주소)
-            gungu_addr(시군구 주소)
+            sigungu_addr(시군구 주소)
             street_addr(도로 주소)
             detail_addr(상세 주소 - default:None)
             postal_code(우편 번호 - default:None)

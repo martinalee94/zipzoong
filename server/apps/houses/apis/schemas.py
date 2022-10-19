@@ -9,8 +9,9 @@ class DefaultOutSchema(Schema):
 
 class CreateHouseAddressInSchema(Schema):
     seller_id: str
+    full_addr: str
     sido_addr: str
-    gungu_addr: str
+    sigungu_addr: str
     street_addr: str
     detail_addr: str = None
     postal_code: str = None
