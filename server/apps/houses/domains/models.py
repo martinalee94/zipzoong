@@ -7,8 +7,9 @@ from django.utils import timezone
 
 class House(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
+    full_addr = models.CharField(max_length=128)
     sido_addr = models.CharField(max_length=32)
-    gungu_addr = models.CharField(max_length=32)
+    sigungu_addr = models.CharField(max_length=32)
     street_addr = models.CharField(max_length=128)
     detail_addr = models.CharField(max_length=256, null=True)
     postal_code = models.CharField(max_length=6, null=True)

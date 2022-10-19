@@ -27,8 +27,9 @@ def _check_house_exist(house_id):
 
 def add_house(
     seller_id: str,
+    full_addr: str,
     sido_addr: str,
-    gungu_addr: str,
+    sigungu_addr: str,
     street_addr: str,
     detail_addr: str = None,
     postal_code: str = None,
@@ -39,7 +40,8 @@ def add_house(
 
     house = House.create_house(
         sido_addr=sido_addr,
-        gungu_addr=gungu_addr,
+        full_addr=full_addr,
+        sigungu_addr=sigungu_addr,
         street_addr=street_addr,
         detail_addr=detail_addr,
         postal_code=postal_code,
