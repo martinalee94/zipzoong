@@ -31,3 +31,4 @@ def update_broker_detail(decoded_token, position, association, license_num):
     broker.license_num = license_num
     broker.save()
     return
+
