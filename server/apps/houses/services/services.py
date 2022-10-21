@@ -151,57 +151,13 @@ def add_house_images(house_id, image, file_date_key):
     return
 
 
-# @sync_to_async
-# def add_house_images(house_id, images):
-#     house = _check_house_exist(house_id)
-
-#     for image in images:
-#         if image.size > ALLOWED_IMAGE_SIZE:
-#             raise ImageSizeIsExceeded
-#         origin_image_type = image.name.split(".")[-1].lower()
-#         if origin_image_type not in ALLOWED_IMAGE_TYPE:
-#             raise ImageTypeIsNotAllowed
-
-#     # 파일이름 "houseid_filedatekey_filenamekey"
-#     file_date_key = datetime.now().strftime("%Y%m%d%H%M%S")
-#     for image in images:
-#         file_name_key = randrange(10000000, 99999999)
-
-#         origin_image = Image.open(image)
-#         origin_width, origin_height = origin_image.size
-
-#         Path(MEDIA_ROOT + f"/{house_id}/{file_date_key}").mkdir(parents=True, exist_ok=True)
-#         path = (
-#             MEDIA_ROOT
-#             + f"/{house_id}/{file_date_key}/{house_id}_{file_date_key}_{file_name_key}.png"
-#         )
-#         origin_image.save(path, "PNG")
-
-#         image = HouseImage(
-#             house=house,
-#             path=path,
-#             name=f"{house_id}_{file_date_key}_{file_name_key}.png",
-#             type="png",
-#             size=image.size,
-#             width=origin_width,
-#             height=origin_height,
-#             wh_type=1,
-#         )
-#         image.save()
-
-#     return
-
-
-def get_house_info_list(decoded_token, page_num=10, info_num=1):
+def get_house_info_list(decoded_token, page_num: int, info_num: int):
     result = []
     seller_id = decoded_token["id"]
-
-    houses = House.objects.filter(seller_id=seller_id).order_by("created_dt")
-    houses = Paginator(houses, page_num).page(info_num).object_list
-    print(houses)
+    houses = House.objects.filter(seller_id=seller_id).prefetch_related("detail")
+    houses.order_by("created_dt")
     for house in houses:
         house_dict = {}
-        full_addr = house.sido_addr + house.gungu_addr + house.street_addr + house.detail_addr
         options = {
             "type": house.detail.type_option,
             "floor": house.detail.floor_option,
@@ -209,19 +165,30 @@ def get_house_info_list(decoded_token, page_num=10, info_num=1):
             "restroom": house.detail.restroom_option,
             "duplex": house.detail.duplex_option,
         }
+
         contract_detail = {}
-        if house.detail.type_option == ContractTypes.SALE:
+        if house.contract_type == ContractTypes.SALE:
             contract_detail["sale_price"] = house.sale_price
-        elif house.detail.type_option == ContractTypes.CHARTERED_RENT:
+        elif house.contract_type == ContractTypes.CHARTERED_RENT:
             contract_detail["charter_rent"] = house.charter_rent
-        elif house.detail.type_option == ContractTypes.MONTHLY_RENT:
+        elif house.contract_type == ContractTypes.MONTHLY_RENT:
             contract_detail["monthly_deposit"] = house.monthly_deposit
             contract_detail["monthly_rent"] = house.monthly_rent
+
+        images_list = []
+        images = HouseImage.objects.filter(house=house)
+        for image in images:
+            img = {}
+            img["path"] = image.path
+            img["name"] = image.name
+            images_list.append(img)
+
         house_dict["id"] = house.id
-        house_dict["address"] = full_addr
+        house_dict["address"] = house.full_addr
         house_dict["contract_type"] = house.contract_type
         house_dict["contract_detail"] = contract_detail
         house_dict["options"] = options
-        house_dict["images"] = "hi"
+        house_dict["images"] = images_list
         result.append(house_dict)
+    result = Paginator(result, page_num).page(info_num).object_list
     return result
