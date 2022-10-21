@@ -35,7 +35,7 @@ def custom_api_exception_handler(req, exc):
 
 
 @api.exception_handler(Exception)
-def custom_api_exception_handler(req, exc):
+def custom_exception_handler(req, exc):
     return Response(str(exc), status=400)
 
 
