@@ -10,3 +10,11 @@ class APIException(Exception):
         self.status_detail = exception_code[1]
         self.error_code = error_code
         self.message = message
+
+
+class ImageTypeIsNotAllowed(Exception):
+    pass
+
+
+class ImageSizeIsExceeded(Exception):
+    pass

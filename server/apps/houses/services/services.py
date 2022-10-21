@@ -1,10 +1,8 @@
-import os
-from datetime import datetime
 from pathlib import Path
 from random import randrange
 
+from apps.commons.exceptions import ImageSizeIsExceeded, ImageTypeIsNotAllowed
 from apps.users.domains.models import Seller
-from apps.users.utils import ClientToken
 from asgiref.sync import sync_to_async
 from config.settings.base import MEDIA_ROOT
 from django.core.exceptions import ObjectDoesNotExist
@@ -12,7 +10,7 @@ from django.core.paginator import Paginator
 from PIL import Image
 
 from ..domains.models import House, HouseDetail, HouseImage, HouseOptionCode
-from ..exceptions import HouseNotFound, ImageSizeIsExceeded, ImageTypeIsNotAllowed, SellerNotFound
+from ..exceptions import HouseNotFound, SellerNotFound
 from .enums import ContractTypes
 from .utils import ALLOWED_IMAGE_SIZE, ALLOWED_IMAGE_TYPE, OPTION_CODE
 

@@ -1,0 +1,2 @@
+ALLOWED_IMAGE_TYPE = ["jpg", "jpeg", "png"]
+ALLOWED_IMAGE_SIZE = 5 * 1024 * 1024
