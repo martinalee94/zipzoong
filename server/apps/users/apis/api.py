@@ -11,7 +11,7 @@ from . import schemas as auth_schemas
 
 @api_controller("/auth", tags=["Auth"])
 class MyTokenAPIController:
-    @route.post("/sellers/token", response=auth_schemas.GetTokenOutSchema, url_name="getToken")
+    @route.post("/users/token", response=auth_schemas.GetTokenOutSchema, url_name="getToken")
     def get_access_token_for_seller(self, user_info: auth_schemas.GetSellerTokenInSchema):
         try:
             issued_token = services.issue_seller_access_token(user_info.id, user_info.client_secret)
@@ -22,7 +22,7 @@ class MyTokenAPIController:
         return issued_token
 
     @route.post(
-        "/sellers/token/verify",
+        "/users/token/verify",
         response=auth_schemas.VerifyIssuedTokenOutSchema,
         url_name="verifyToken",
     )
