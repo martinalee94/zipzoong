@@ -1,3 +1,6 @@
+from apps.brokers.apis import schemas as broker_schemas
+from apps.brokers.services import exceptions as broker_exceptions
+from apps.brokers.services import services as broker_services
 from apps.commons.exceptions import APIException, APIExceptionErrorCodes
 from ninja_extra import api_controller, route
 
@@ -50,3 +53,23 @@ class UserAPIController:
                 APIExceptionErrorCodes.BAD_REQUEST, message="Client secret already exists."
             )
         return seller
+
+    @route.post(
+        "/broker/sign-up",
+        url_name="Sign-up broker",
+        response=broker_schemas.BrokerSignUpOutSchema,
+    )
+    def register_broker(self, info: broker_schemas.BrokerSignUpSchema):
+        try:
+            broker_services.add_new_broker(**info.__dict__)
+            response = broker_services.issue_broker_access_token(**info.__dict__)
+        except broker_exceptions.PasswordCheckRequired:
+            raise APIException(
+                APIExceptionErrorCodes.BAD_REQUEST,
+                message="Password and confirmed password are not matched.",
+            )
+        except broker_exceptions.BrokerAlreadyExist:
+            raise APIException(
+                APIExceptionErrorCodes.BAD_REQUEST, message="Broker account is already registered."
+            )
+        return response
