@@ -1,10 +1,12 @@
+from apps.commons.models import TimeStampModel
 from django.db import models
 
-from apps.commons.models import TimeStampModel
-
-
-class Brokers(models.Model):
+class Broker(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
+    email = models.EmailField()
+    name = models.CharField(max_length=12)
+    password = models.CharField(max_length=64)
+
     position = models.CharField(max_length=32, null=True)
     association = models.CharField(max_length=64, null=True)
     license_num = models.CharField(max_length=32, null=True)
@@ -16,9 +18,9 @@ class Brokers(models.Model):
         db_table = "broker"
 
 
-class BrokerImages(models.Model):
+class BrokerImage(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
-    broker = models.ForeignKey(Brokers, on_delete=models.CASCADE)
+    broker = models.ForeignKey(Broker, on_delete=models.CASCADE)
     path = models.CharField(max_length=256, null=True)
     name = models.CharField(max_length=256, null=True)
     type = models.CharField(max_length=32, null=True)
