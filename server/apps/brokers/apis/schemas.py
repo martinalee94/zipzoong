@@ -20,3 +20,9 @@ class BrokerSignUpOutSchema(Schema):
     #     return confirmed_password
     # class Config:
     #     arbitrary_types_allowed = True
+    
+
+class BrokerDetailInSchema(Schema):
+    position: str
+    association: str
+    agent_license_num: str

@@ -1,12 +1,19 @@
+from apps.brokers.domains.models import Broker
 from ninja_schema import ModelSchema, Schema
 
 from ..domains.models import Seller
 
 
-class GetTokenInSchema(ModelSchema):
+class GetSellerTokenInSchema(ModelSchema):
     class Config:
         model = Seller
         include = ["id", "client_secret"]
+
+
+class GetBrokerTokenInSchema(ModelSchema):
+    class Config:
+        model = Broker
+        include = ["email", "password"]
 
 
 class GetTokenOutSchema(Schema):

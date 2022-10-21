@@ -19,3 +19,16 @@ def add_new_broker(email, password, confirmed_password, name):
 def issue_broker_access_token(email, password, **kwargs):
     token = BrokerToken(email=email, password=password).encode()
     return {"email": email, "access_token": token}
+
+
+def update_broker_detail(decoded_token, position, association, license_num):
+    email = decoded_token["email"]
+    broker = Broker.objects.filter(email=email).first()
+    if not broker:
+        raise exceptions.BrokerDoesNotExist
+    broker.association = association
+    broker.position = position
+    broker.license_num = license_num
+    broker.save()
+    return
+

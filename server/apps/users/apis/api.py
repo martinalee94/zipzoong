@@ -6,38 +6,56 @@ from ninja_extra import api_controller, route
 
 from ..exceptions import SellerAlreadyExist, SellerDoesNotExist
 from ..services import services
-from .schemas import (
-    CreateSellerServerIdInSchema,
-    CreateSellerServerIdOutSchema,
-    GetTokenInSchema,
-    GetTokenOutSchema,
-    VerifyIssuedTokenInSchema,
-    VerifyIssuedTokenOutSchema,
-)
+from . import schemas as auth_schemas
 
 
 @api_controller("/auth", tags=["Auth"])
 class MyTokenAPIController:
-    @route.post("/token", response=GetTokenOutSchema, url_name="getToken")
-    def get_access_token(self, user_info: GetTokenInSchema):
+    @route.post("/sellers/token", response=auth_schemas.GetTokenOutSchema, url_name="getToken")
+    def get_access_token_for_seller(self, user_info: auth_schemas.GetSellerTokenInSchema):
         try:
-            issued_token = services.issue_access_token(user_info.id, user_info.client_secret)
+            issued_token = services.issue_seller_access_token(user_info.id, user_info.client_secret)
         except SellerDoesNotExist:
             raise APIException(
                 APIExceptionErrorCodes.BAD_REQUEST, message="Client secret or id is invalid."
             )
         return issued_token
 
-    @route.post("/token/verify", response=VerifyIssuedTokenOutSchema, url_name="verifyToken")
-    def verify_access_token(self, token: VerifyIssuedTokenInSchema):
-        result = services.verify_access_token(**token.__dict__)
+    @route.post(
+        "/sellers/token/verify",
+        response=auth_schemas.VerifyIssuedTokenOutSchema,
+        url_name="verifyToken",
+    )
+    def verify_seller_access_token_for_seller(self, token: auth_schemas.VerifyIssuedTokenInSchema):
+        result = services.verify_seller_access_token(**token.__dict__)
+        return result
+
+    @route.post("/brokers/login", response=auth_schemas.GetTokenOutSchema, url_name="getToken")
+    def get_access_token_for_broker(self, broker_info: auth_schemas.GetBrokerTokenInSchema):
+        try:
+            issued_token = services.issue_broker_access_token(**broker_info.__dict__)
+        except SellerDoesNotExist:
+            raise APIException(
+                APIExceptionErrorCodes.BAD_REQUEST, message="Broker info is invalid."
+            )
+        return issued_token
+
+    @route.post(
+        "/brokers/token/verify",
+        response=auth_schemas.VerifyIssuedTokenOutSchema,
+        url_name="verifyToken",
+    )
+    def verify_access_token_for_broker(self, token: auth_schemas.VerifyIssuedTokenInSchema):
+        result = services.verify_broker_access_token(**token.__dict__)
         return result
 
 
 @api_controller("/users", tags=["User"])
 class UserAPIController:
-    @route.post("/client-id", response=CreateSellerServerIdOutSchema, url_name="getClientId")
-    def get_client_id(self, client_secret: CreateSellerServerIdInSchema):
+    @route.post(
+        "/client-id", response=auth_schemas.CreateSellerServerIdOutSchema, url_name="getClientId"
+    )
+    def get_client_id(self, client_secret: auth_schemas.CreateSellerServerIdInSchema):
         """
         ## Body
             client_secret(클라이언트 id)\n
@@ -47,7 +65,7 @@ class UserAPIController:
         """
         try:
             seller = services.create_server_id_for_user(**client_secret.__dict__)
-            seller = CreateSellerServerIdOutSchema.from_orm(seller)
+            seller = auth_schemas.CreateSellerServerIdOutSchema.from_orm(seller)
         except SellerAlreadyExist:
             raise APIException(
                 APIExceptionErrorCodes.BAD_REQUEST, message="Client secret already exists."
@@ -55,7 +73,7 @@ class UserAPIController:
         return seller
 
     @route.post(
-        "/broker/sign-up",
+        "/brokers/sign-up",
         url_name="Sign-up broker",
         response=broker_schemas.BrokerSignUpOutSchema,
     )
