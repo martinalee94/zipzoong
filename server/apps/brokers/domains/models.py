@@ -1,12 +1,12 @@
 from apps.commons.models import TimeStampModel
 from django.db import models
 
-
 class Broker(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     email = models.EmailField()
     name = models.CharField(max_length=12)
     password = models.CharField(max_length=64)
+
     position = models.CharField(max_length=32, null=True)
     association = models.CharField(max_length=64, null=True)
     license_num = models.CharField(max_length=32, null=True)
