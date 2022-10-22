@@ -188,5 +188,5 @@ def get_house_info_list(decoded_token, page_num: int, info_num: int):
         house_dict["options"] = options
         house_dict["images"] = images_list
         result.append(house_dict)
-    result = Paginator(result, page_num).page(info_num).object_list
+    result = Paginator(result, info_num).page(page_num).object_list
     return result
