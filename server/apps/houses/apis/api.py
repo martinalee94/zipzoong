@@ -176,7 +176,7 @@ class HouseAPIController:
         return
 
     @route.post("/list", url_name="getHouseInfo")
-    def get_house_list(self, request, pageNum: int = 10, infoNum: int = 1):
+    def get_house_list(self, request, pageNum: int = 1, infoNum: int = 10):
         try:
             result = services.get_house_info_list(request.auth, pageNum, infoNum)
         except HouseNotFound:
