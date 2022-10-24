@@ -4,7 +4,7 @@ from typing import List
 
 from apps.commons.core import AuthBearer
 from apps.commons.exceptions import APIException, APIExceptionErrorCodes
-from ninja import File
+from ninja import File, Query
 from ninja.files import UploadedFile
 from ninja_extra import api_controller, route
 
@@ -25,8 +25,15 @@ from .schemas import (
 @api_controller("/houses", tags=["Houses"], auth=AuthBearer())
 class HouseAPIController:
     @route.post("/address", url_name="saveAddress", response={200: CreateHouseAddressOutSchema})
-    def save_address(self, addr_info: CreateHouseAddressInSchema):
+    def save_address(
+        self,
+        addr_info: CreateHouseAddressInSchema,
+        house_id: str = Query(None, description="매물 id"),
+    ):
         """
+        ## Parms
+            house_id ("매물 id") - Optional
+
         ## Body
             seller_id(의뢰인 서버쪽 id)
             full_addr(전체주소))
@@ -37,11 +44,10 @@ class HouseAPIController:
             postal_code(우편 번호 - default:None)
         """
         try:
-            house = services.add_house(**addr_info.__dict__)
-            house = CreateHouseAddressOutSchema.from_orm(house)
+            house = services.add_house(house_id, **addr_info.dict())
         except SellerNotFound:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="Seller id is invalid")
-        return house
+        return CreateHouseAddressOutSchema.from_orm(house)
 
     @route.get(
         "/default-contract-type",

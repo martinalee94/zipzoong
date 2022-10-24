@@ -26,6 +26,7 @@ def _check_house_exist(house_id):
 
 
 def add_house(
+    house_id: str,
     seller_id: str,
     full_addr: str,
     sido_addr: str,
@@ -38,16 +39,27 @@ def add_house(
     if not seller:
         raise SellerNotFound
 
-    house = House.create_house(
-        sido_addr=sido_addr,
-        full_addr=full_addr,
-        sigungu_addr=sigungu_addr,
-        street_addr=street_addr,
-        detail_addr=detail_addr,
-        postal_code=postal_code,
-        seller=seller[0],
-    )
-    HouseDetail.objects.create(house=house)
+    try:
+        House.objects.filter(id=house_id).update(
+            sido_addr=sido_addr,
+            full_addr=full_addr,
+            sigungu_addr=sigungu_addr,
+            street_addr=street_addr,
+            detail_addr=detail_addr,
+            postal_code=postal_code,
+        )
+        house = House.objects.get(id=house_id)
+    except Exception as e:
+        house = House.create_house(
+            sido_addr=sido_addr,
+            full_addr=full_addr,
+            sigungu_addr=sigungu_addr,
+            street_addr=street_addr,
+            detail_addr=detail_addr,
+            postal_code=postal_code,
+            seller=seller[0],
+        )
+        HouseDetail.objects.create(house=house)
     return house
 
 
