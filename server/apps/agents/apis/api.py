@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from apps.commons.core import AgentAuthBearer
 from apps.commons.exceptions import APIException, APIExceptionErrorCodes
@@ -41,7 +42,7 @@ class AgentAPIController:
             )
         return
 
-    @route.get("/houses/list")
+    @route.get("/houses/list", response=List[schemas.AgentHouseList])
     def get_nearby_house_list(
         self, request, location, pagination: house_schemas.PaginationListSchema = Query(...)
     ):
@@ -52,6 +53,6 @@ class AgentAPIController:
         )
 
         return [
-            schemas.AgentHouseListOut(page_num=pagination.page_num, num=i, house_info=house_list[i])
+            schemas.AgentHouseList(page_num=pagination.page_num, num=i, house_info=house_list[i])
             for i in range(len(house_list))
         ]
