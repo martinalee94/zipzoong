@@ -19,7 +19,7 @@ THIRD_APPS = [
 USER_APPS = [
     "apps.houses",
     "apps.users",
-    "apps.brokers",
+    "apps.agents",
 ]
 
 INSTALLED_APPS = (

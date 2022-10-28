@@ -32,7 +32,7 @@ class ClientToken:
         return decoded_token
 
 
-class BrokerToken:
+class AgentToken:
     def __init__(self, email: str, password: str):
         self.email = email
         self.password = password

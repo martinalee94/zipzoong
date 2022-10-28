@@ -1,7 +1,8 @@
 from apps.commons.models import TimeStampModel
 from django.db import models
 
-class Broker(models.Model):
+
+class Agent(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     email = models.EmailField()
     name = models.CharField(max_length=12)
@@ -15,12 +16,12 @@ class Broker(models.Model):
     modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
 
     class Meta:
-        db_table = "broker"
+        db_table = "agent"
 
 
-class BrokerImage(models.Model):
+class AgentImage(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
-    broker = models.ForeignKey(Broker, on_delete=models.CASCADE)
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     path = models.CharField(max_length=256, null=True)
     name = models.CharField(max_length=256, null=True)
     type = models.CharField(max_length=32, null=True)
@@ -31,4 +32,4 @@ class BrokerImage(models.Model):
     modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
 
     class Meta:
-        db_table = "broker_image"
+        db_table = "agent_image"

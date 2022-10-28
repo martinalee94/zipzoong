@@ -6,9 +6,9 @@ class SellerDoesNotExist(Exception):
     pass
 
 
-class BrokerAlreadyExist(Exception):
+class AgentAlreadyExist(Exception):
     pass
 
 
-class BrokerDoesNotExist(Exception):
+class AgentDoesNotExist(Exception):
     pass

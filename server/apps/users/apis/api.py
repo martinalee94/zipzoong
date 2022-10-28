@@ -1,6 +1,6 @@
-from apps.brokers.apis import schemas as broker_schemas
-from apps.brokers.services import exceptions as broker_exceptions
-from apps.brokers.services import services as broker_services
+from apps.agents.apis import schemas as agent_schemas
+from apps.agents.services import exceptions as agent_exceptions
+from apps.agents.services import services as agent_services
 from apps.commons.exceptions import APIException, APIExceptionErrorCodes
 from ninja_extra import api_controller, route
 
@@ -30,23 +30,21 @@ class MyTokenAPIController:
         result = services.verify_seller_access_token(**token.__dict__)
         return result
 
-    @route.post("/brokers/login", response=auth_schemas.GetTokenOutSchema, url_name="getToken")
-    def get_access_token_for_broker(self, broker_info: auth_schemas.GetBrokerTokenInSchema):
+    @route.post("/agents/login", response=auth_schemas.GetTokenOutSchema, url_name="getToken")
+    def get_access_token_for_agent(self, agent_info: auth_schemas.GetAgentTokenInSchema):
         try:
-            issued_token = services.issue_broker_access_token(**broker_info.__dict__)
+            issued_token = services.issue_agent_access_token(**agent_info.__dict__)
         except SellerDoesNotExist:
-            raise APIException(
-                APIExceptionErrorCodes.BAD_REQUEST, message="Broker info is invalid."
-            )
+            raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="Agent info is invalid.")
         return issued_token
 
     @route.post(
-        "/brokers/token/verify",
+        "/agents/token/verify",
         response=auth_schemas.VerifyIssuedTokenOutSchema,
         url_name="verifyToken",
     )
-    def verify_access_token_for_broker(self, token: auth_schemas.VerifyIssuedTokenInSchema):
-        result = services.verify_broker_access_token(**token.__dict__)
+    def verify_access_token_for_agent(self, token: auth_schemas.VerifyIssuedTokenInSchema):
+        result = services.verify_agent_access_token(**token.__dict__)
         return result
 
 
@@ -73,21 +71,21 @@ class UserAPIController:
         return seller
 
     @route.post(
-        "/brokers/sign-up",
-        url_name="Sign-up broker",
-        response=broker_schemas.BrokerSignUpOutSchema,
+        "/agents/sign-up",
+        url_name="Sign-up agent",
+        response=agent_schemas.AgentSignUpOutSchema,
     )
-    def register_broker(self, info: broker_schemas.BrokerSignUpSchema):
+    def register_agent(self, info: agent_schemas.AgentSignUpSchema):
         try:
-            broker_services.add_new_broker(**info.__dict__)
-            response = broker_services.issue_broker_access_token(**info.__dict__)
-        except broker_exceptions.PasswordCheckRequired:
+            agent_services.add_new_agent(**info.__dict__)
+            response = agent_services.issue_agent_access_token(**info.__dict__)
+        except agent_exceptions.PasswordCheckRequired:
             raise APIException(
                 APIExceptionErrorCodes.BAD_REQUEST,
                 message="Password and confirmed password are not matched.",
             )
-        except broker_exceptions.BrokerAlreadyExist:
+        except agent_exceptions.AgentAlreadyExist:
             raise APIException(
-                APIExceptionErrorCodes.BAD_REQUEST, message="Broker account is already registered."
+                APIExceptionErrorCodes.BAD_REQUEST, message="Agent account is already registered."
             )
         return response

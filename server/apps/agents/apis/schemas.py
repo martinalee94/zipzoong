@@ -1,14 +1,14 @@
 from ninja_schema import Schema
 
 
-class BrokerSignUpSchema(Schema):
+class AgentSignUpSchema(Schema):
     email: str
     password: str
     confirmed_password: str
     name: str
 
 
-class BrokerSignUpOutSchema(Schema):
+class AgentSignUpOutSchema(Schema):
     email: str
     access_token: str
 
@@ -20,9 +20,9 @@ class BrokerSignUpOutSchema(Schema):
     #     return confirmed_password
     # class Config:
     #     arbitrary_types_allowed = True
-    
 
-class BrokerDetailInSchema(Schema):
+
+class AgentDetailInSchema(Schema):
     position: str
     association: str
     agent_license_num: str

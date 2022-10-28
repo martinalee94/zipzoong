@@ -1,11 +1,11 @@
 from http import client
 
-from apps.brokers.domains.models import Broker
+from apps.agents.domains.models import Agent
 from django.core.exceptions import ObjectDoesNotExist
 
 from ..domains.models import Seller
-from ..exceptions import BrokerDoesNotExist, SellerAlreadyExist, SellerDoesNotExist
-from ..utils import BrokerToken, ClientToken
+from ..exceptions import AgentDoesNotExist, SellerAlreadyExist, SellerDoesNotExist
+from ..utils import AgentToken, ClientToken
 
 
 def issue_seller_access_token(id, client_secret):
@@ -24,17 +24,17 @@ def verify_seller_access_token(token):
     return {"token_state": "N"}
 
 
-def issue_broker_access_token(email, password):
+def issue_agent_access_token(email, password):
     try:
-        Broker.objects.get(email=email)
+        Agent.objects.get(email=email)
     except ObjectDoesNotExist:
-        raise BrokerDoesNotExist
-    token = BrokerToken(email=email, password=password).encode()
+        raise AgentDoesNotExist
+    token = AgentToken(email=email, password=password).encode()
     return {"access": token}
 
 
-def verify_broker_access_token(token):
-    result = BrokerToken.decode(token)
+def verify_agent_access_token(token):
+    result = AgentToken.decode(token)
     if result:
         return {"token_state": "Y"}
     return {"token_state": "N"}

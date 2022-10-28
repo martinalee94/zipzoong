@@ -1,6 +1,6 @@
 from ninja.security import HttpBearer
 
-from apps.users.utils import BrokerToken, ClientToken
+from apps.users.utils import AgentToken, ClientToken
 
 
 class AuthBearer(HttpBearer):
@@ -9,7 +9,7 @@ class AuthBearer(HttpBearer):
         return result
 
 
-class BrokerAuthBearer(HttpBearer):
+class AgentAuthBearer(HttpBearer):
     def authenticate(self, request, token):
-        result = BrokerToken.decode(token)
+        result = AgentToken.decode(token)
         return result

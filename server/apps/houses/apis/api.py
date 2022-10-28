@@ -137,7 +137,7 @@ class HouseAPIController:
         return
 
     @route.post(
-        "/{house_id}/image",
+        "/media/{house_id}/image",
         url_name="saveImage",
         response={204: None},
     )
