@@ -1,3 +1,4 @@
+from ninja import Field
 from ninja_schema import ModelSchema, Schema
 
 from ..domains.models import HouseDetail, HouseImage, HouseOptionCode
@@ -8,13 +9,13 @@ class DefaultOutSchema(Schema):
 
 
 class CreateHouseAddressInSchema(Schema):
-    seller_id: str
-    full_addr: str
-    sido_addr: str
-    sigungu_addr: str
-    street_addr: str
-    detail_addr: str = None
-    postal_code: str = None
+    full_jibun_addr: str = Field(..., description="서울 관악구 봉천동 896-28")
+    full_street_addr: str = Field(..., description="서울 관악구 남부순환로214길 40")
+    sido_addr: str = Field(..., description="서울")
+    sigungu_addr: str = Field(..., description="서울 관악구")
+    street_addr: str = Field(..., description="남부순환로214길")
+    detail_addr: str = Field(None, description="상세주소")
+    postal_code: str = Field(None, description="우편번호")
 
 
 class CreateHouseAddressOutSchema(Schema):

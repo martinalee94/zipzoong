@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from PIL import Image
 
+from ..apis import schemas
 from ..domains.models import House, HouseDetail, HouseImage, HouseOptionCode
 from ..exceptions import HouseNotFound, SellerNotFound
 from .enums import ContractTypes
@@ -23,40 +24,17 @@ def _check_house_exist(house_id):
     return house
 
 
-def add_house(
-    house_id: str,
-    seller_id: str,
-    full_addr: str,
-    sido_addr: str,
-    sigungu_addr: str,
-    street_addr: str,
-    detail_addr: str = None,
-    postal_code: str = None,
-):
+def add_house(house_id: str, seller_id: str, addr_info: schemas.CreateHouseAddressInSchema):
     seller = Seller.objects.filter(id=seller_id)
     if not seller:
         raise SellerNotFound
 
+    addr_info = addr_info.dict()
     try:
-        House.objects.filter(id=house_id).update(
-            sido_addr=sido_addr,
-            full_addr=full_addr,
-            sigungu_addr=sigungu_addr,
-            street_addr=street_addr,
-            detail_addr=detail_addr,
-            postal_code=postal_code,
-        )
+        House.objects.filter(id=house_id).update(**addr_info)
         house = House.objects.get(id=house_id)
     except Exception as e:
-        house = House.create_house(
-            sido_addr=sido_addr,
-            full_addr=full_addr,
-            sigungu_addr=sigungu_addr,
-            street_addr=street_addr,
-            detail_addr=detail_addr,
-            postal_code=postal_code,
-            seller=seller[0],
-        )
+        house = House.create_house(seller=seller[0], **addr_info)
         HouseDetail.objects.create(house=house)
     return house
 

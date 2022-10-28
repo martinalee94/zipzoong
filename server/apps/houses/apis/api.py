@@ -4,7 +4,7 @@ from typing import List
 
 from apps.commons.core import AuthBearer
 from apps.commons.exceptions import APIException, APIExceptionErrorCodes
-from ninja import File, Query
+from ninja import Body, File, Query
 from ninja.files import UploadedFile
 from ninja_extra import api_controller, route
 
@@ -29,6 +29,7 @@ class HouseAPIController:
         self,
         addr_info: CreateHouseAddressInSchema,
         house_id: str = Query(None, description="매물 id"),
+        seller_id: str = Body(..., description="의뢰인 서버쪽 id"),
     ):
         """
         ## Parms
@@ -36,15 +37,21 @@ class HouseAPIController:
 
         ## Body
             seller_id(의뢰인 서버쪽 id)
-            full_addr(전체주소))
-            sido_addr(시도 주소)
-            sigungu_addr(시군구 주소)
-            street_addr(도로 주소)
-            detail_addr(상세 주소 - default:None)
-            postal_code(우편 번호 - default:None)
+            full_jibun_addr : "서울 관악구 봉천동 896-28"
+            full_street_addr: "서울 관악구 남부순환로214길 40"
+            sido_addr: "서울"
+            sigungu_addr:"서울 관악구"
+            dong_addr: "서울 관악구 봉천동"
+            street_addr : "남부순환로214길"
+            detail_addr: 상세주소
+            postal_code: 우편번호
         """
         try:
-            house = services.add_house(house_id, **addr_info.dict())
+            house = services.add_house(
+                house_id=house_id,
+                seller_id=seller_id,
+                addr_info=addr_info,
+            )
         except SellerNotFound:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="Seller id is invalid")
         return CreateHouseAddressOutSchema.from_orm(house)
