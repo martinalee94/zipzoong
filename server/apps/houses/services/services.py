@@ -172,7 +172,7 @@ def get_house_info_list(decoded_token, page_num: int, info_num: int):
             images_list.append(img)
 
         house_dict["id"] = house.id
-        house_dict["address"] = house.full_addr
+        house_dict["address"] = house.full_street_addr
         house_dict["contract_type"] = house.contract_type
         house_dict["contract_detail"] = contract_detail
         house_dict["options"] = options

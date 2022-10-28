@@ -2,7 +2,8 @@ from datetime import datetime
 
 from apps.commons.core import AgentAuthBearer
 from apps.commons.exceptions import APIException, APIExceptionErrorCodes
-from ninja import File
+from apps.houses.apis import schemas as house_schemas
+from ninja import File, Query
 from ninja.files import UploadedFile
 from ninja_extra import api_controller, route
 
@@ -39,3 +40,18 @@ class AgentAPIController:
                 APIExceptionErrorCodes.BAD_REQUEST, message="This user is not registered."
             )
         return
+
+    @route.get("/houses/list")
+    def get_nearby_house_list(
+        self, request, location, pagination: house_schemas.PaginationListSchema = Query(...)
+    ):
+        house_list = services.get_nearby_houses_list(
+            decoded_token=request.auth,
+            location=location,
+            pagination=pagination,
+        )
+
+        return [
+            schemas.AgentHouseListOut(page_num=pagination.page_num, num=i, house_info=house_list[i])
+            for i in range(len(house_list))
+        ]

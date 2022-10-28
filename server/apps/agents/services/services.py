@@ -8,8 +8,12 @@ from apps.commons.exceptions import (
     ImageTypeIsNotAllowed,
 )
 from apps.commons.utils import ALLOWED_IMAGE_SIZE, ALLOWED_IMAGE_TYPE
+from apps.houses.apis import schemas as house_schemas
+from apps.houses.domains.models import House, HouseImage
+from apps.houses.services.enums import ContractTypes
 from apps.users.utils import AgentToken
 from config.settings.base import MEDIA_ROOT
+from django.core.paginator import Paginator
 from PIL import Image
 
 from ..domains.models import Agent, AgentImage
@@ -89,3 +93,54 @@ def add_agent_license_images(decoded_token, image, file_date_key):
             message="File type is not allowed - (jpg, jpeg, png)",
         )
     return
+
+
+def get_nearby_houses_list(
+    decoded_token, location: str, pagination: house_schemas.PaginationListSchema
+):
+    email = decoded_token["email"]
+    agent = Agent.objects.filter(email=email).first()
+    if not agent:
+        raise exceptions.AgentDoesNotExist
+
+    houses = House.objects.filter(dong_addr__contains=location).prefetch_related("detail")
+    houses.order_by("created_dt")
+    houses = Paginator(houses, pagination.info_num).page(pagination.page_num).object_list
+
+    result = []
+    for house in houses:
+        house_dict = {}
+        options = {
+            "type": house.detail.type_option,
+            "floor": house.detail.floor_option,
+            "room": house.detail.rooms_option,
+            "restroom": house.detail.restroom_option,
+            "duplex": house.detail.duplex_option,
+        }
+
+        contract_detail = {}
+        if house.contract_type == ContractTypes.SALE:
+            contract_detail["sale_price"] = house.sale_price
+        elif house.contract_type == ContractTypes.CHARTERED_RENT:
+            contract_detail["charter_rent"] = house.charter_rent
+        elif house.contract_type == ContractTypes.MONTHLY_RENT:
+            contract_detail["monthly_deposit"] = house.monthly_deposit
+            contract_detail["monthly_rent"] = house.monthly_rent
+
+        images_list = []
+        images = HouseImage.objects.filter(house=house)
+        for image in images:
+            img = {}
+            img["path"] = image.path
+            img["name"] = image.name
+            images_list.append(img)
+
+        house_dict["id"] = house.id
+        house_dict["address"] = house.full_street_addr
+        house_dict["contract_type"] = house.contract_type
+        house_dict["contract_detail"] = contract_detail
+        house_dict["options"] = options
+        house_dict["images"] = images_list
+        result.append(house_dict)
+
+    return result

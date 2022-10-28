@@ -13,8 +13,6 @@ from ..services import services
 from .schemas import (
     CreateHouseAddressInSchema,
     CreateHouseAddressOutSchema,
-    ListHouseInfoListInSchema,
-    ListHouseInfoListOutSchema,
     UpdateHouseCharterPriceInSchema,
     UpdateHouseMonthlyPriceInSchema,
     UpdateHouseSalePriceInSchema,

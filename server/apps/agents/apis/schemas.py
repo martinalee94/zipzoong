@@ -1,3 +1,5 @@
+from apps.houses.apis.schemas import ListHouseInfoListOutSchema
+from ninja import Field
 from ninja_schema import Schema
 
 
@@ -26,3 +28,9 @@ class AgentDetailInSchema(Schema):
     position: str
     association: str
     agent_license_num: str
+
+
+class AgentHouseListOut(Schema):
+    page_num: int = Field(..., description="시작페이지넘버")
+    num: int = Field(..., description="순서")
+    house_info: dict = Field(None, description="순서")
