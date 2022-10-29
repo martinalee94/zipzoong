@@ -151,7 +151,6 @@ class HouseAPIController:
     async def save_house_images(self, house_id: str, images: List[UploadedFile] = File(...)):
         try:
             event_loop = []
-            file_date_key = datetime.now().strftime("%Y%m%d%H%M%S")
             # for n, image in enumerate(images):
             #     event_loop.append(
             #         services.add_house_images(
@@ -167,10 +166,8 @@ class HouseAPIController:
             #         )
             #     )
 
-            for image in images:
-                await services.add_house_images(
-                    house_id=house_id, image=image, file_date_key=file_date_key
-                )
+            for num, image in enumerate(images):
+                await services.add_house_images(house_id=house_id, image=image, num=num)
         except HouseNotFound:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="House id is invalid")
         except ImageSizeIsExceeded:

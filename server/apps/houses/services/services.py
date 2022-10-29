@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 from random import randrange
 
@@ -104,7 +105,7 @@ def update_house_options(
 
 
 @sync_to_async
-def add_house_images(house_id, image, file_date_key):
+def add_house_images(house_id: str, image, num: int):
     house = _check_house_exist(house_id)
 
     if image.size > ALLOWED_IMAGE_SIZE:
@@ -113,22 +114,19 @@ def add_house_images(house_id, image, file_date_key):
     if origin_image_type not in ALLOWED_IMAGE_TYPE:
         raise ImageTypeIsNotAllowed
 
-    # 파일이름 "houseid_filedatekey_filenamekey"
-    file_name_key = randrange(10000000, 99999999)
+    file_date_key = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     origin_image = Image.open(image)
     origin_width, origin_height = origin_image.size
 
-    Path(MEDIA_ROOT + f"/{house_id}/{file_date_key}").mkdir(parents=True, exist_ok=True)
-    path = (
-        MEDIA_ROOT + f"/{house_id}/{file_date_key}/{house_id}_{file_date_key}_{file_name_key}.png"
-    )
+    Path(MEDIA_ROOT + f"/{house_id}").mkdir(parents=True, exist_ok=True)
+    path = MEDIA_ROOT + f"/{house_id}/{file_date_key}_{num}.png"
     origin_image.save(path, "PNG")
 
     image = HouseImage(
         house=house,
-        path=f"/{house_id}/{file_date_key}/{house_id}_{file_date_key}_{file_name_key}.png",
-        name=f"{house_id}_{file_date_key}_{file_name_key}.png",
+        path=path,
+        name=f"{file_date_key}_{num}.png",
         type="png",
         size=image.size,
         width=origin_width,
