@@ -1,3 +1,5 @@
+import random
+import string
 from pathlib import Path
 from random import randrange
 
@@ -9,7 +11,7 @@ from apps.commons.exceptions import (
 )
 from apps.commons.utils import ALLOWED_IMAGE_SIZE, ALLOWED_IMAGE_TYPE
 from apps.houses.apis import schemas as house_schemas
-from apps.houses.domains.models import House, HouseImage
+from apps.houses.domains.models import House, HouseBidInfo, HouseImage
 from apps.houses.services.enums import ContractTypes
 from apps.users.utils import AgentToken
 from config.settings.base import MEDIA_ROOT
@@ -20,6 +22,11 @@ from ..domains.models import Agent, AgentImage
 from . import exceptions
 
 
+def create_agent_id():
+    chars = string.ascii_uppercase + string.digits
+    return "a-" + "".join(random.choice(chars) for _ in range(10))
+
+
 def add_new_agent(email, password, confirmed_password, name):
     agent = Agent.objects.filter(email=email).first()
     if agent:
@@ -27,7 +34,8 @@ def add_new_agent(email, password, confirmed_password, name):
     if password != confirmed_password:
         raise exceptions.PasswordCheckRequired
 
-    agent = Agent(email=email, password=password, name=name)
+    agent_id = create_agent_id()
+    agent = Agent(id=agent_id, email=email, password=password, name=name)
     agent.save()
     return
 
@@ -144,3 +152,18 @@ def get_nearby_houses_list(
         result.append(house_dict)
 
     return result
+
+
+def add_agent_biding_info(decoded_token, house_id, bid_price):
+    email = decoded_token["email"]
+    agent = Agent.objects.filter(email=email).first()
+    if not agent:
+        raise exceptions.AgentDoesNotExist
+
+    house_bid = HouseBidInfo.objects.filter(house_id=house_id, agent_id=agent.id).first()
+    if house_bid:
+        house_bid.bid_price = bid_price
+        house_bid.save()
+    else:
+        HouseBidInfo.objects.create(house_id=house_id, agent_id=agent.id, bid_price=bid_price)
+    return

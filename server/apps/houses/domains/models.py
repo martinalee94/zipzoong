@@ -1,5 +1,7 @@
+from email.policy import default
 from uuid import uuid4
 
+from apps.agents.domains.models import Agent
 from apps.users.domains.models import Seller
 from django.db import models
 from django.utils import timezone
@@ -78,3 +80,21 @@ class HouseImage(models.Model):
 
     class Meta:
         db_table = "house_image"
+
+
+class HouseBidInfo(models.Model):
+    house = models.ForeignKey(House, to_field="id", related_name="bid", on_delete=models.CASCADE)
+    agent = models.ForeignKey(Agent, to_field="id", related_name="bid", on_delete=models.CASCADE)
+    bid_price = models.IntegerField(verbose_name="입찰가")
+    contact_req = models.BooleanField(verbose_name="연락 요청 여부", default=False)
+    success_bid = models.BooleanField(verbose_name="낙찰 성공 여부", default=False)
+    kind_rating = models.IntegerField(verbose_name="친절도", default=0)
+    speed_rating = models.IntegerField(verbose_name="빠른처리", default=0)
+    cost_rating = models.IntegerField(verbose_name="가격 경쟁력", default=0)
+    time_rating = models.IntegerField(verbose_name="시간약속", default=0)
+    quality_rating = models.IntegerField(verbose_name="좋은 매물", default=0)
+    created_dt = models.DateTimeField(verbose_name="생성 날짜", db_index=True, auto_now_add=True)
+    modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
+
+    class Meta:
+        db_table = "house_bid_info"

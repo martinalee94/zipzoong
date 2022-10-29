@@ -4,7 +4,7 @@ from typing import List
 from apps.commons.core import AgentAuthBearer
 from apps.commons.exceptions import APIException, APIExceptionErrorCodes
 from apps.houses.apis import schemas as house_schemas
-from ninja import File, Query
+from ninja import Body, File, Query
 from ninja.files import UploadedFile
 from ninja_extra import api_controller, route
 
@@ -56,3 +56,16 @@ class AgentAPIController:
             schemas.AgentHouseList(page_num=pagination.page_num, num=i, house_info=house_list[i])
             for i in range(len(house_list))
         ]
+
+    @route.post("/houses/bid", response={204: None})
+    def add_agent_biding_info(
+        self,
+        request,
+        house_id: str = Body(..., description="집 id"),
+        bid_price: int = Body(..., description="입찰가"),
+    ):
+        services.add_agent_biding_info(
+            decoded_token=request.auth, house_id=house_id, bid_price=bid_price
+        )
+
+        return
