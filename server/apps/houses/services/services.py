@@ -139,11 +139,13 @@ def add_house_images(house_id, image, file_date_key):
     return
 
 
-def get_house_info_list(decoded_token, page_num: int, info_num: int):
+def get_house_info_list(decoded_token, pagination: schemas.PaginationListSchema):
     result = []
     seller_id = decoded_token["id"]
     houses = House.objects.filter(seller_id=seller_id).prefetch_related("detail")
     houses.order_by("created_dt")
+    houses = Paginator(houses, pagination.info_num).page(pagination.page_num).object_list
+
     for house in houses:
         house_dict = {}
         options = {
@@ -178,5 +180,4 @@ def get_house_info_list(decoded_token, page_num: int, info_num: int):
         house_dict["options"] = options
         house_dict["images"] = images_list
         result.append(house_dict)
-    result = Paginator(result, info_num).page(page_num).object_list
     return result

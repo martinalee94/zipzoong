@@ -13,6 +13,8 @@ from ..services import services
 from .schemas import (
     CreateHouseAddressInSchema,
     CreateHouseAddressOutSchema,
+    PaginationListSchema,
+    SellerHouseListOut,
     UpdateHouseCharterPriceInSchema,
     UpdateHouseMonthlyPriceInSchema,
     UpdateHouseSalePriceInSchema,
@@ -180,10 +182,13 @@ class HouseAPIController:
             )
         return
 
-    @route.post("/list", url_name="getHouseInfo")
-    def get_house_list(self, request, pageNum: int = 1, infoNum: int = 10):
+    @route.post("/list", url_name="getHouseInfo", response=List[SellerHouseListOut])
+    def get_house_list(self, request, pagination: PaginationListSchema = Query(...)):
         try:
-            result = services.get_house_info_list(request.auth, pageNum, infoNum)
+            result = services.get_house_info_list(request.auth, pagination=pagination)
         except HouseNotFound:
             raise APIException(APIExceptionErrorCodes.BAD_REQUEST, message="House id is invalid")
-        return result
+        return [
+            SellerHouseListOut(page_num=pagination.page_num, num=i, house_info=result[i])
+            for i in range(len(result))
+        ]

@@ -67,3 +67,9 @@ class ListHouseInfoListOutSchema(Schema):
     contract_detail: dict = Field(None, description="상세 계약 조건")
     options: ListHouseDefaultOptionsOutSchema = None
     images: ListHouseImagesOutSchema = None
+
+
+class SellerHouseListOut(Schema):
+    page_num: int = Field(..., description="시작페이지넘버")
+    num: int = Field(..., description="순서")
+    house_info: dict = Field(None, description="순서")
