@@ -34,3 +34,13 @@ class AgentHouseList(Schema):
     page_num: int = Field(..., description="시작페이지넘버")
     num: int = Field(..., description="순서")
     house_info: dict = Field(None, description="순서")
+
+
+class AgentProfileImage(Schema):
+    path: str = Field(..., description="이미지 경로")
+    name: str = Field(..., description="이미지 이름")
+
+
+class AgentProfileOut(Schema):
+    email: str = Field(..., description="이메일")
+    image: AgentProfileImage

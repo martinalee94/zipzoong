@@ -1,5 +1,6 @@
 import random
 import string
+from datetime import datetime
 from pathlib import Path
 from random import randrange
 
@@ -167,3 +168,48 @@ def add_agent_biding_info(decoded_token, house_id, bid_price):
     else:
         HouseBidInfo.objects.create(house_id=house_id, agent_id=agent.id, bid_price=bid_price)
     return
+
+
+def add_agent_profile_image(decoded_token: str, upload_image):
+    email = decoded_token["email"]
+    agent = Agent.objects.filter(email=email).first()
+    if not agent:
+        raise exceptions.AgentDoesNotExist
+
+    pillow_image = Image.open(upload_image)
+    width, height = pillow_image.size
+    file_date_key = datetime.now().strftime("%Y%m%d_%H%M%S")
+    Path(MEDIA_ROOT + f"/{agent.id}").mkdir(parents=True, exist_ok=True)
+    path = MEDIA_ROOT + f"/{agent.id}/{file_date_key}.png"
+    pillow_image.save(path, "PNG")
+
+    image = AgentImage.objects.filter(agent=agent).first()
+    if image:
+        image.path = path
+        image.name = f"{file_date_key}.png"
+        image.size = upload_image.size
+        image.width = width
+        image.height = height
+        image.save()
+    else:
+        image = AgentImage(
+            agent=agent,
+            path=path,
+            name=f"{file_date_key}.png",
+            type="png",
+            size=upload_image.size,
+            width=width,
+            height=height,
+        )
+        image.save()
+    return
+
+
+def get_agent_profile(decoded_token):
+    email = decoded_token["email"]
+    agent = Agent.objects.filter(email=email).first()
+    if not agent:
+        raise exceptions.AgentDoesNotExist
+
+    image = AgentImage.objects.get(agent=agent)
+    return (email, image)

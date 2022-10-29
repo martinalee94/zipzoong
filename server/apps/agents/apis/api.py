@@ -67,5 +67,14 @@ class AgentAPIController:
         services.add_agent_biding_info(
             decoded_token=request.auth, house_id=house_id, bid_price=bid_price
         )
-
         return
+
+    @route.post("/profile/image", response={204: None})
+    def add_agent_profile_image(self, request, image: UploadedFile = File(...)):
+        services.add_agent_profile_image(decoded_token=request.auth, upload_image=image)
+        return
+
+    @route.get("/profile", response=schemas.AgentProfileOut)
+    def get_agent_profile(self, request):
+        profile = services.get_agent_profile(decoded_token=request.auth)
+        return schemas.AgentProfileOut(email=profile[0], image=profile[1])

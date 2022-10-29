@@ -20,8 +20,7 @@ class Agent(models.Model):
 
 
 class AgentImage(models.Model):
-    id = models.CharField(max_length=32, primary_key=True)
-    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
+    agent = models.ForeignKey(Agent, related_name="image", on_delete=models.CASCADE)
     path = models.CharField(max_length=256, null=True)
     name = models.CharField(max_length=256, null=True)
     type = models.CharField(max_length=32, null=True)
