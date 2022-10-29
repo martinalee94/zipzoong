@@ -213,3 +213,52 @@ def get_agent_profile(decoded_token):
 
     image = AgentImage.objects.get(agent=agent)
     return (email, image)
+
+
+def get_biding_house_list(decoded_token, pagination):
+    email = decoded_token["email"]
+    agent = Agent.objects.filter(email=email).first()
+    if not agent:
+        raise exceptions.AgentDoesNotExist
+
+    house_bids = HouseBidInfo.objects.filter(agent__id=agent.id)
+    house_bids.order_by("created_dt")
+    house_bids = Paginator(house_bids, pagination.info_num).page(pagination.page_num).object_list
+
+    result = []
+    for bid in house_bids:
+        house_dict = {}
+
+        options = {
+            "type": bid.house.detail.type_option,
+            "floor": bid.house.detail.floor_option,
+            "room": bid.house.detail.rooms_option,
+            "restroom": bid.house.detail.restroom_option,
+            "duplex": bid.house.detail.duplex_option,
+        }
+
+        contract_detail = {}
+        if bid.house.contract_type == ContractTypes.SALE:
+            contract_detail["sale_price"] = bid.house.sale_price
+        elif bid.house.contract_type == ContractTypes.CHARTERED_RENT:
+            contract_detail["charter_rent"] = bid.house.charter_rent
+        elif bid.house.contract_type == ContractTypes.MONTHLY_RENT:
+            contract_detail["monthly_deposit"] = bid.house.monthly_deposit
+            contract_detail["monthly_rent"] = bid.house.monthly_rent
+
+        images_list = []
+        images = HouseImage.objects.filter(house_id=bid.house.id)
+        for image in images:
+            img = {}
+            img["path"] = image.path
+            img["name"] = image.name
+            images_list.append(img)
+
+        house_dict["id"] = bid.house.id
+        house_dict["address"] = bid.house.full_street_addr
+        house_dict["contract_type"] = bid.house.contract_type
+        house_dict["contract_detail"] = contract_detail
+        house_dict["options"] = options
+        house_dict["images"] = images_list
+        result.append(house_dict)
+    return result

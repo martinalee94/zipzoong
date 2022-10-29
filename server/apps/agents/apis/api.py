@@ -78,3 +78,17 @@ class AgentAPIController:
     def get_agent_profile(self, request):
         profile = services.get_agent_profile(decoded_token=request.auth)
         return schemas.AgentProfileOut(email=profile[0], image=profile[1])
+
+    @route.get("/houses/bid-list", response=List[schemas.AgentHouseList])
+    def get_biding_house_list(
+        self, request, pagination: house_schemas.PaginationListSchema = Query(...)
+    ):
+        house_list = services.get_biding_house_list(
+            decoded_token=request.auth,
+            pagination=pagination,
+        )
+
+        return [
+            schemas.AgentHouseList(page_num=pagination.page_num, num=i, house_info=house_list[i])
+            for i in range(len(house_list))
+        ]
