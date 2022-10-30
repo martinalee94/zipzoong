@@ -1,6 +1,6 @@
 services:
   server:
-    container_name: zipzoong-test-prod
+    container_name: zipzoong-prod-django
     build: 
       context: .
     env_file:
@@ -19,7 +19,7 @@ services:
       - db
       
   db:
-    container_name: zipzoong-test-prod-db
+    container_name: zipzoong-prod-db
     image: mysql
     env_file:
       - ./.env
