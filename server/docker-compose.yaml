@@ -1,0 +1,30 @@
+services:
+  server:
+    container_name: zipzoong-test-prod
+    build: 
+      context: .
+    env_file:
+      - ./.env
+    volumes:
+      - .:/usr/src/app
+    command: sh -c "python manage.py collectstatic --noinput &&
+        gunicorn -c config/gunicorn.conf.py"
+    # command: sh -c "python server/manage.py collectstatic --noinput &&
+    #     gunicorn --bind 0:8000 server.config.wsgi:application"
+    expose:
+      - "8000"
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+      
+  db:
+    container_name: zipzoong-test-prod-db
+    image: mysql
+    env_file:
+      - ./.env
+    ports:
+      - 3308:3306
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Seoul
