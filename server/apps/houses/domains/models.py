@@ -34,7 +34,7 @@ class House(models.Model):
         return house
 
     class Meta:
-        db_table = "house"
+        db_table = "zipzoong_house"
 
 
 class HouseOptionCode(models.Model):
@@ -45,7 +45,7 @@ class HouseOptionCode(models.Model):
     modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
 
     class Meta:
-        db_table = "house_option_code"
+        db_table = "zipzoong_house_option_code"
 
 
 class HouseDetail(models.Model):
@@ -64,7 +64,7 @@ class HouseDetail(models.Model):
     modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
 
     class Meta:
-        db_table = "house_detail"
+        db_table = "zipzoong_house_detail"
 
 
 class HouseImage(models.Model):
@@ -79,7 +79,7 @@ class HouseImage(models.Model):
     created_dt = models.DateTimeField(verbose_name="생성 날짜", auto_now_add=True)
 
     class Meta:
-        db_table = "house_image"
+        db_table = "zipzoong_house_image"
 
 
 class HouseBidInfo(models.Model):
@@ -97,4 +97,4 @@ class HouseBidInfo(models.Model):
     modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
 
     class Meta:
-        db_table = "house_bid_info"
+        db_table = "zipzoong_house_bid_info"

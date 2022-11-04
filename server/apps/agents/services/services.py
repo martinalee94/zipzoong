@@ -14,6 +14,7 @@ from apps.commons.utils import ALLOWED_IMAGE_SIZE, ALLOWED_IMAGE_TYPE
 from apps.houses.apis import schemas as house_schemas
 from apps.houses.domains.models import House, HouseBidInfo, HouseImage
 from apps.houses.services.enums import ContractTypes
+from apps.users.domains.models import Notice, Qna
 from apps.users.utils import AgentToken
 from config.settings.base import MEDIA_ROOT
 from django.core.paginator import Paginator
@@ -262,3 +263,13 @@ def get_biding_house_list(decoded_token, pagination):
         house_dict["images"] = images_list
         result.append(house_dict)
     return result
+
+
+def get_agent_notice_list(decoded_token, pagination):
+    email = decoded_token["email"]
+    agent = Agent.objects.filter(email=email).first()
+    if not agent:
+        raise exceptions.AgentDoesNotExist
+    notice_list = Notice.objects.filter(type__in=[0, 1]).order_by("created_dt")
+    notice_list = Paginator(notice_list, pagination.info_num).page(pagination.page_num).object_list
+    return notice_list

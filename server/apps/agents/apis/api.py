@@ -92,3 +92,14 @@ class AgentAPIController:
             schemas.AgentHouseList(page_num=pagination.page_num, num=i, house_info=house_list[i])
             for i in range(len(house_list))
         ]
+
+    @route.get("/notice-list", response=List[schemas.AgentNoticeOut])
+    def get_notice_list(self, request, pagination: house_schemas.PaginationListSchema = Query(...)):
+        notice_list = services.get_agent_notice_list(
+            decoded_token=request.auth, pagination=pagination
+        )
+
+        return [
+            schemas.AgentNoticeOut(page_num=pagination.page_num, num=i, notice=notice_list[i])
+            for i in range(len(notice_list))
+        ]

@@ -16,7 +16,7 @@ class Agent(models.Model):
     modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
 
     class Meta:
-        db_table = "agent"
+        db_table = "zipzoong_agent"
 
 
 class AgentImage(models.Model):
@@ -31,4 +31,4 @@ class AgentImage(models.Model):
     modified_dt = models.DateTimeField(verbose_name="수정 날짜", auto_now=True)
 
     class Meta:
-        db_table = "agent_image"
+        db_table = "zipzoong_agent_image"

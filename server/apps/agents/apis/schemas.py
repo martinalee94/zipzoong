@@ -44,3 +44,14 @@ class AgentProfileImage(Schema):
 class AgentProfileOut(Schema):
     email: str = Field(..., description="이메일")
     image: AgentProfileImage
+
+
+class NoticeORM(Schema):
+    title: str = Field(..., description="제목")
+    contents: str = Field(..., description="내용")
+
+
+class AgentNoticeOut(Schema):
+    page_num: int = Field(..., description="시작페이지넘버")
+    num: int = Field(..., description="순서")
+    notice: NoticeORM = Field(None, description="공지")

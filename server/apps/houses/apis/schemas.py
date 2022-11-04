@@ -58,7 +58,7 @@ class UpdateHouseSelectedOptionsInSchema(Schema):
 
 class PaginationListSchema(Schema):
     page_num: int = Field(1, description="시작 페이지")
-    info_num: int = Field(10, description="가져올 집 정보 개수")
+    info_num: int = Field(10, description="가져올 정보 개수")
 
 
 class ListHouseInfoListOutSchema(Schema):

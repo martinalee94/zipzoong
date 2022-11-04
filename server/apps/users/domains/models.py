@@ -26,20 +26,28 @@ class Seller(models.Model):
         return seller
 
     class Meta:
-        db_table = "seller"
+        db_table = "zipzoong_seller"
 
 
-# class User(models.Model):
-#     nickname = models.CharField(max_length=16, unique=True)
-#     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, null=True, related_name="user")
-#     agent = models.ForeignKey(Agent, on_delete=models.CASCADE, null=True, related_name="user")
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     modified_at = models.DateTimeField(auto_now=True)
+class Notice(models.Model):
+    priority = models.IntegerField(null=True)
+    title = models.CharField(max_length=500)
+    contents = models.TextField()
+    type = models.IntegerField()
+    created_dt = models.DateTimeField(auto_now_add=True)
+    modified_dt = models.DateTimeField(auto_now=True)
 
-#     class Meta:
-#         constraints = [
-#             models.CheckConstraint(
-#                 name="user_seller_or_agent",
-#                 check=Q(seller__isnull=True, agent__isnull=False) | Q(seller__isnull=False, agent__isnull=True)
-#             )
-#         ]
+    class Meta:
+        db_table = "zipzoong_notice"
+
+
+class Qna(models.Model):
+    priority = models.IntegerField(null=True)
+    question = models.CharField(max_length=500)
+    answer = models.TextField()
+    type = models.IntegerField()
+    created_dt = models.DateTimeField(auto_now_add=True)
+    modified_dt = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "zipzoong_qna"
