@@ -273,3 +273,14 @@ def get_agent_notice_list(decoded_token, pagination):
     notice_list = Notice.objects.filter(type__in=[0, 1]).order_by("created_dt")
     notice_list = Paginator(notice_list, pagination.info_num).page(pagination.page_num).object_list
     return notice_list
+
+
+def get_agent_qna_list(decoded_token, pagination):
+    email = decoded_token["email"]
+    agent = Agent.objects.filter(email=email).first()
+    if not agent:
+        raise exceptions.AgentDoesNotExist
+
+    qna_list = Qna.objects.filter(type__in=[0, 1]).order_by("created_dt")
+    qna_list = Paginator(qna_list, pagination.info_num).page(pagination.page_num).object_list
+    return qna_list

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from apps.houses.apis.schemas import ListHouseInfoListOutSchema
 from ninja import Field
 from ninja_schema import Schema
@@ -49,9 +51,21 @@ class AgentProfileOut(Schema):
 class NoticeORM(Schema):
     title: str = Field(..., description="제목")
     contents: str = Field(..., description="내용")
+    created_dt: datetime = Field(..., description="생성일자")
 
 
 class AgentNoticeOut(Schema):
     page_num: int = Field(..., description="시작페이지넘버")
     num: int = Field(..., description="순서")
     notice: NoticeORM = Field(None, description="공지")
+
+
+class QnaORM(Schema):
+    question: str = Field(..., description="제목")
+    answer: str = Field(..., description="내용")
+
+
+class AgentQnaOut(Schema):
+    page_num: int = Field(..., description="시작페이지넘버")
+    num: int = Field(..., description="순서")
+    qna: QnaORM = Field(None, description="질문")

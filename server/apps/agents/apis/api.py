@@ -103,3 +103,12 @@ class AgentAPIController:
             schemas.AgentNoticeOut(page_num=pagination.page_num, num=i, notice=notice_list[i])
             for i in range(len(notice_list))
         ]
+
+    @route.get("/qna-list", response=List[schemas.AgentQnaOut])
+    def get_qna_list(self, request, pagination: house_schemas.PaginationListSchema = Query(...)):
+        qna_list = services.get_agent_qna_list(decoded_token=request.auth, pagination=pagination)
+
+        return [
+            schemas.AgentQnaOut(page_num=pagination.page_num, num=i, qna=qna_list[i])
+            for i in range(len(qna_list))
+        ]
